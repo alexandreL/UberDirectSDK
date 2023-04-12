@@ -1,5 +1,12 @@
 import { UberDeliveryAuth } from './UberDeliveryAuth'
-import { DeliveryListResponse, DeliveryRequest, DeliveryResponse, QuoteRequest, QuoteResponse } from './types'
+import {
+    DeliveryListResponse,
+    DeliveryRequest,
+    DeliveryResponse, PODRequest,
+    PODResponse,
+    QuoteRequest,
+    QuoteResponse
+} from './types'
 
 class DaaS {
     constructor(private readonly auth: UberDeliveryAuth) {
@@ -45,5 +52,12 @@ class DaaS {
 
         const response = await this.auth.makeApiRequest<DeliveryListResponse>('get', url)
         return response
+    }
+
+    async getPOD(customerId: string, deliveryId: string, requestBody: PODRequest): Promise<PODResponse> {
+        const url = `customers/${customerId}/deliveries/${deliveryId}/proof-of-delivery`;
+
+        const response = await this.auth.makeApiRequest<PODResponse>('post', url, requestBody);
+        return response;
     }
 }

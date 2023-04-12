@@ -604,3 +604,12 @@ export interface DeliveryListResponse {
     /** URL for the request */
     url: string;
 }
+
+export interface PODResponse {
+    document: string; // A long Base64 string representing the image
+}
+
+export interface PODRequest extends Record<string, unknown> {
+    waypoint: 'pickup' | 'dropoff' | 'return';
+    type: 'picture' | 'signature' | 'pincode';
+}
