@@ -32,4 +32,11 @@ class DaaS {
         const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url, requestBody)
         return response
     }
+
+    async cancelDelivery(deliveryId: string): Promise<boolean> {
+        const url = `customers/${ this.auth.getCustomerId() }/deliveries/${ deliveryId }/cancel`
+
+        const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url)
+        return response.status === 'canceled'
+    }
 }
