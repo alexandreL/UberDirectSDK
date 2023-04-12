@@ -1,5 +1,5 @@
 import JsSHA from 'jssha'
-import { DeliveryResponse } from './types'
+import { CourierUpdate, DeliveryResponse } from './types'
 
 class UberDeliveryWebhook {
     private readonly secret: string
@@ -21,6 +21,14 @@ class UberDeliveryWebhook {
         return payload.kind === 'event.delivery_status'
     }
 
+    public isCourierUpdateEvent(payload: string | Record<string, unknown>): boolean {
+        if (typeof payload === 'string') {
+            const parsedPayload = JSON.parse(payload)
+            return parsedPayload.kind === 'event.courier_update'
+        }
+        return payload.kind === 'event.courier_update'
+    }
+
     private calculateSignature(payload: string | Record<string, unknown>): string {
         const shaObj = new JsSHA('SHA-256', 'TEXT')
         shaObj.setHMACKey(this.secret, 'TEXT')
@@ -32,7 +40,7 @@ class UberDeliveryWebhook {
         return shaObj.getHMAC('HEX')
     }
 
-    public handleWebhook(payload: string | Record<string, unknown>, headers: Record<string, unknown>): DeliveryResponse | undefined {
+    public handleWebhook(payload: string | Record<string, unknown>, headers: Record<string, unknown>): DeliveryResponse | CourierUpdate | undefined {
         let signature = headers['x-postmates-signature']
         if (!signature)
             throw new Error('No signature provided')
@@ -48,5 +56,6 @@ class UberDeliveryWebhook {
         }
 
         if (this.isDeliveryStatusEvent(payload)) return payload as DeliveryResponse
+        if (this.isCourierUpdateEvent(payload)) return payload as CourierUpdate
     }
 }

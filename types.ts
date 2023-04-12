@@ -71,7 +71,7 @@ export interface StructuredAddress extends Record<string, unknown> {
     country?: string;
 }
 
-export interface DeliveryRequest extends Record<string, unknown> {
+export interface DeliveryData extends Record<string, unknown> {
     /** The address where the courier will make the dropoff in structured address format. */
     dropoff_address: string;
     /** Name of the place where the courier will make the dropoff. */
@@ -606,10 +606,24 @@ export interface DeliveryListResponse {
 }
 
 export interface PODResponse {
-    document: string; // A long Base64 string representing the image
+    /** A long Base64 string representing the image */
+    document: string;
 }
 
 export interface PODRequest extends Record<string, unknown> {
     waypoint: 'pickup' | 'dropoff' | 'return';
     type: 'picture' | 'signature' | 'pincode';
+}
+
+export interface CourierUpdate {
+    location: LatLng;
+    /** The kind of the event (always "event.courier_update") */
+    kind: string;
+    /** Flag indicating if the event applies to a live vs. a test delivery */
+    live_mode: boolean;
+    /** The ID of the delivery the event applies to */
+    delivery_id: string;
+    /** The ID of the job the event applies to */
+    job_id: string;
+    data: DeliveryData;
 }

@@ -1,7 +1,7 @@
 import { UberDeliveryAuth } from './UberDeliveryAuth'
 import {
     DeliveryListResponse,
-    DeliveryRequest,
+    DeliveryData,
     DeliveryResponse, PODRequest,
     PODResponse,
     QuoteRequest,
@@ -19,7 +19,7 @@ class DaaS {
         return response
     }
 
-    async createDelivery(requestBody: DeliveryRequest): Promise<DeliveryResponse> {
+    async createDelivery(requestBody: DeliveryData): Promise<DeliveryResponse> {
         const url = `customers/${ this.auth.getCustomerId() }/deliveries`
 
         const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url, requestBody)
@@ -33,7 +33,7 @@ class DaaS {
         return response
     }
 
-    async updateDelivery(deliveryId: string, requestBody: DeliveryRequest): Promise<DeliveryResponse> {
+    async updateDelivery(deliveryId: string, requestBody: DeliveryData): Promise<DeliveryResponse> {
         const url = `customers/${ this.auth.getCustomerId() }/deliveries/${ deliveryId }`
 
         const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url, requestBody)
