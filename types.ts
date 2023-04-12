@@ -288,6 +288,8 @@ export interface DeliveryResponse extends Record<string, unknown> {
     pickup_ready: string;
     /** ID for the Delivery Quote if one was provided when creating this Delivery. */
     quote_id: string;
+    /** This is an array of the refund information. */
+    refund: RefundData[];
     /** A collection describing other jobs that share an association. i.e.: a return delivery. */
     related_deliveries: RelatedDelivery[];
     /** The current status of the delivery. Always pending when the delivery is created. */
@@ -494,4 +496,46 @@ export interface RelatedDelivery {
     id: string;
     /** Indicating the nature of the delivery identified in related_deliveries */
     relationship: 'original' | 'returned';
+}
+interface RefundData {
+    id: string; // Unique identifier of the refund request.
+    created_at: number; // UTC Time i.e. 2023-03-15T04:14:15Z.
+    currency_code: string; // Three-letter ISO currency code, in uppercase i.e. USD.
+    total_partner_refund: number; // Total monetary amount that the partner is liable to their customers for in cents i.e. 1234.
+    total_uber_refund: number; // Total monetary amount that Uber will adjust on the billing details report & invoice in cents i.e. 1834.
+    refund_fees: RefundFee[]; // See the refund fee array object.
+    refund_order_items: RefundOrderItem[]; // See the refund order item array object.
+}
+
+interface RefundFee {
+    fee_code: FeeCode; // See the fee code string object.
+    value: number; // The amount of the refund fee of the given category.
+    category: Category; // See the category string object.
+}
+
+type FeeCode = 'UBER_DELIVERY_FEE' | 'PARTNER_FEE' | 'PARTNER_TAX';
+
+type Category = 'DELIVERY' | 'TAX';
+
+interface RefundOrderItem {
+    refund_items: RefundItem[]; // See the refund item array object.
+    party_at_fault: string; // “UBER” or “PARTNER”.
+    partner_refund_amount: number; // The monetary value of items that the partner is liable towards their customers in cents.
+    uber_refund_amount: number; // The monetary value of items that Uber will adjust on the billing details report & invoice in cents.
+    reason: string; // A predefined string of refund reason.
+}
+
+interface RefundItem {
+    name: string; // The name of the item.
+    quantity: number; // The quantity of the item.
+}
+
+interface RefundPayload {
+    created: string;
+    data: RefundData;
+    delivery_id: string;
+    external_id: string;
+    external_order_id: string;
+    id: string;
+    kind: string;
 }

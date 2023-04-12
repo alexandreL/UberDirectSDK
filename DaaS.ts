@@ -19,4 +19,10 @@ class DaaS {
         return response
     }
 
+    async getDelivery(deliveryId: string): Promise<DeliveryResponse> {
+        const url = `customers/${ this.auth.getCustomerId() }/deliveries/${ deliveryId }`
+
+        const response = await this.auth.makeApiRequest<DeliveryResponse>('get', url)
+        return response
+    }
 }
