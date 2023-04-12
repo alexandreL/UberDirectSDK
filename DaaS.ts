@@ -1,5 +1,5 @@
 import { UberDeliveryAuth } from './UberDeliveryAuth'
-import { DeliveryRequest, DeliveryResponse, QuoteRequest, QuoteResponse } from './types'
+import { DeliveryListResponse, DeliveryRequest, DeliveryResponse, QuoteRequest, QuoteResponse } from './types'
 
 class DaaS {
     constructor(private readonly auth: UberDeliveryAuth) {
@@ -38,5 +38,12 @@ class DaaS {
 
         const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url)
         return response.status === 'canceled'
+    }
+
+    async listDeliveries(): Promise<DeliveryListResponse> {
+        const url = `customers/${ this.auth.getCustomerId() }/deliveries`
+
+        const response = await this.auth.makeApiRequest<DeliveryListResponse>('get', url)
+        return response
     }
 }

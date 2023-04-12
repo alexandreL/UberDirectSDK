@@ -497,6 +497,7 @@ export interface RelatedDelivery {
     /** Indicating the nature of the delivery identified in related_deliveries */
     relationship: 'original' | 'returned';
 }
+
 export interface RefundData {
     /**  Unique identifier of the refund request. */
     id: string;
@@ -556,6 +557,7 @@ export interface RefundPayload {
     id: string;
     kind: string;
 }
+
 export interface UpdateDeliveryRequest {
     /** Additional instructions for the courier at the dropoff location. Max 280 characters. */
     dropoff_notes?: string;
@@ -589,4 +591,16 @@ export interface UpdateDeliveryRequest {
 
     /** Dropoff longitude coordinate. */
     dropoff_longitude?: number;
+}
+
+export interface DeliveryListResponse {
+    data: DeliveryResponse[];
+    /** URL to fetch the next set of deliveries */
+    next_href: string;
+    /** Response type, always "list" */
+    object: string;
+    /** @deprecated Response is always -1 */
+    total_count: number;
+    /** URL for the request */
+    url: string;
 }
