@@ -497,40 +497,57 @@ export interface RelatedDelivery {
     /** Indicating the nature of the delivery identified in related_deliveries */
     relationship: 'original' | 'returned';
 }
-interface RefundData {
-    id: string; // Unique identifier of the refund request.
-    created_at: number; // UTC Time i.e. 2023-03-15T04:14:15Z.
-    currency_code: string; // Three-letter ISO currency code, in uppercase i.e. USD.
-    total_partner_refund: number; // Total monetary amount that the partner is liable to their customers for in cents i.e. 1234.
-    total_uber_refund: number; // Total monetary amount that Uber will adjust on the billing details report & invoice in cents i.e. 1834.
-    refund_fees: RefundFee[]; // See the refund fee array object.
-    refund_order_items: RefundOrderItem[]; // See the refund order item array object.
+export interface RefundData {
+    /**  Unique identifier of the refund request. */
+    id: string;
+    /**  UTC Time i.e. 2023-03-15T04:14:15Z. */
+    created_at: number;
+    /**  Three-letter ISO currency code, in uppercase i.e. USD. */
+    currency_code: string;
+    /**  Total monetary amount that the partner is liable to their customers for in cents i.e. 1234. */
+    total_partner_refund: number;
+    /**  Total monetary amount that Uber will adjust on the billing details report & invoice in cents i.e. 1834. */
+    total_uber_refund: number;
+    /**  See the refund fee array object. */
+    refund_fees: RefundFee[];
+    /**  See the refund order item array object. */
+    refund_order_items: RefundOrderItem[];
 }
 
-interface RefundFee {
-    fee_code: FeeCode; // See the fee code string object.
-    value: number; // The amount of the refund fee of the given category.
-    category: Category; // See the category string object.
+export interface RefundFee {
+    /**  See the fee code string object. */
+    fee_code: FeeCode;
+    /**  The amount of the refund fee of the given category. */
+    value: number;
+    /**  See the category string object. */
+    category: Category;
 }
 
 type FeeCode = 'UBER_DELIVERY_FEE' | 'PARTNER_FEE' | 'PARTNER_TAX';
 
 type Category = 'DELIVERY' | 'TAX';
 
-interface RefundOrderItem {
-    refund_items: RefundItem[]; // See the refund item array object.
-    party_at_fault: string; // “UBER” or “PARTNER”.
-    partner_refund_amount: number; // The monetary value of items that the partner is liable towards their customers in cents.
-    uber_refund_amount: number; // The monetary value of items that Uber will adjust on the billing details report & invoice in cents.
-    reason: string; // A predefined string of refund reason.
+export interface RefundOrderItem {
+    /**  See the refund item array object. */
+    refund_items: RefundItem[];
+    /**  “UBER” or “PARTNER”. */
+    party_at_fault: string;
+    /**  The monetary value of items that the partner is liable towards their customers in cents. */
+    partner_refund_amount: number;
+    /**  The monetary value of items that Uber will adjust on the billing details report & invoice in cents. */
+    uber_refund_amount: number;
+    /**  A predefined string of refund reason. */
+    reason: string;
 }
 
-interface RefundItem {
-    name: string; // The name of the item.
-    quantity: number; // The quantity of the item.
+export interface RefundItem {
+    /**  The name of the item. */
+    name: string;
+    /**  The quantity of the item. */
+    quantity: number;
 }
 
-interface RefundPayload {
+export interface RefundPayload {
     created: string;
     data: RefundData;
     delivery_id: string;
@@ -538,4 +555,38 @@ interface RefundPayload {
     external_order_id: string;
     id: string;
     kind: string;
+}
+export interface UpdateDeliveryRequest {
+    /** Additional instructions for the courier at the dropoff location. Max 280 characters. */
+    dropoff_notes?: string;
+
+    /** Additional instructions provided by the merchant for the dropoff. Max 280 characters. */
+    dropoff_seller_notes?: string;
+
+    /** Verification steps (i.e. barcode scanning) that must be taken before the dropoff can be completed. */
+    dropoff_verification?: VerificationRequirement;
+
+    /** Reference that identifies the manifest. Use this to connect a delivery to corresponding information in your system. */
+    manifest_reference?: string;
+
+    /** Additional instructions for the courier at the pickup location. Max 280 characters. */
+    pickup_notes?: string;
+
+    /** Verification steps (i.e. barcode scanning) that must be taken before the pickup can be completed. */
+    pickup_verification?: VerificationRequirement;
+
+    /** Flag to indicate this delivery requires signature capture at dropoff. */
+    requires_dropoff_signature?: boolean;
+
+    /** Flag to indicate this delivery requires ID verification. */
+    requires_id?: boolean;
+
+    /** Amount in cents that will be paid to the courier as a tip. Can be modified up to 24 hours after a delivery is completed. */
+    tip_by_customer?: number;
+
+    /** Dropoff latitude coordinate. */
+    dropoff_latitude?: number;
+
+    /** Dropoff longitude coordinate. */
+    dropoff_longitude?: number;
 }
