@@ -1,5 +1,5 @@
 import JsSHA from 'jssha'
-import { CourierUpdate, DeliveryResponse } from './types'
+import { CourierUpdate, DeliveryResponse, RefundRequestEvent, WebhookEventKind } from './types'
 
 class UberDeliveryWebhook {
     private readonly secret: string
@@ -13,20 +13,13 @@ class UberDeliveryWebhook {
         return signature === signatureHeader
     }
 
-    public isDeliveryStatusEvent(payload: string | Record<string, unknown>): boolean {
+    public getRequestEventKind(payload: string | Record<string, unknown>): WebhookEventKind {
         if (typeof payload === 'string') {
             const parsedPayload = JSON.parse(payload)
-            return parsedPayload.kind === 'event.delivery_status'
+            return parsedPayload.kind
         }
-        return payload.kind === 'event.delivery_status'
-    }
-
-    public isCourierUpdateEvent(payload: string | Record<string, unknown>): boolean {
-        if (typeof payload === 'string') {
-            const parsedPayload = JSON.parse(payload)
-            return parsedPayload.kind === 'event.courier_update'
-        }
-        return payload.kind === 'event.courier_update'
+        if (!payload.kind) throw new Error('Invalid payload')
+        return payload.kind as WebhookEventKind
     }
 
     private calculateSignature(payload: string | Record<string, unknown>): string {
@@ -40,7 +33,7 @@ class UberDeliveryWebhook {
         return shaObj.getHMAC('HEX')
     }
 
-    public handleWebhook(payload: string | Record<string, unknown>, headers: Record<string, unknown>): DeliveryResponse | CourierUpdate | undefined {
+    public handleWebhook(payload: string | Record<string, unknown>, headers: Record<string, unknown>): DeliveryResponse | CourierUpdate | RefundRequestEvent {
         let signature = headers['x-postmates-signature']
         if (!signature)
             throw new Error('No signature provided')
@@ -55,7 +48,16 @@ class UberDeliveryWebhook {
             throw new Error('Invalid signature')
         }
 
-        if (this.isDeliveryStatusEvent(payload)) return payload as DeliveryResponse
-        if (this.isCourierUpdateEvent(payload)) return payload as CourierUpdate
+        const eventKind = this.getRequestEventKind(payload)
+        switch (eventKind) {
+            case WebhookEventKind.DeliveryStatus:
+                return payload as DeliveryResponse
+            case WebhookEventKind.CourierUpdate:
+                return payload as CourierUpdate
+            case WebhookEventKind.RefundRequest:
+                return payload as RefundRequestEvent
+        }
+
+        throw new Error('Unknown webhook event')
     }
 }
