@@ -615,7 +615,7 @@ export interface PODRequest extends Record<string, unknown> {
     type: 'picture' | 'signature' | 'pincode';
 }
 
-export interface CourierUpdate {
+export interface CourierUpdate extends Record<string, unknown> {
     location: LatLng;
     /** The kind of the event (always "event.courier_update") */
     kind: string;
