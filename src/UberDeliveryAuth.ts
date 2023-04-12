@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosInstance } from 'axios'
-import { AuthCredentials, Method } from './types'
+import { AuthCredentials, Method } from './AuthTypes'
 
 export class UberDeliveryAuth {
     private _clientId: string

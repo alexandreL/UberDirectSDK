@@ -1,5 +1,6 @@
 import JsSHA from 'jssha'
-import { CourierUpdate, DeliveryResponse, RefundRequestEvent, WebhookEventKind } from './types'
+import { DeliveryResponse } from './DaasTypes'
+import { CourierUpdate, RefundRequestEvent, WebhookEventKind } from './WebhookTypes'
 
 class UberDeliveryWebhook {
     private readonly secret: string

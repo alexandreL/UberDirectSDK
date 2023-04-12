@@ -6,7 +6,7 @@ import {
     PODResponse,
     QuoteRequest,
     QuoteResponse
-} from './types'
+} from './DaasTypes'
 
 class DaaS {
     constructor(private readonly auth: UberDeliveryAuth) {
