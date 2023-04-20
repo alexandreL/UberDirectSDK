@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosInstance } from 'axios'
 import { AuthCredentials, Method } from './AuthTypes'
 
-export class UberDeliveryAuth {
+export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
     private _clientId: string
     private _clientSecret: string
     private _customerId: string
@@ -10,6 +10,7 @@ export class UberDeliveryAuth {
     httpClient: AxiosInstance
 
     constructor(credentials: AuthCredentials) {
+        super()
         this._clientId = credentials.clientId
         this._clientSecret = credentials.clientSecret
         this._customerId = credentials.customerId

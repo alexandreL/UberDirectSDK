@@ -1,3 +1,5 @@
+import { z } from "zod"
+
 export interface QuoteRequest extends Record<string, unknown> {
     customer_id: string;
     dropoff_address: string;
@@ -16,19 +18,22 @@ export interface QuoteRequest extends Record<string, unknown> {
     external_store_id?: string;
 }
 
-export interface QuoteResponse {
-    created: string;
-    currency_type: string;
-    dropoff_deadline: string;
-    dropoff_eta: string;
-    duration: number;
-    expires: string;
-    fee: number;
-    id: string;
-    kind: string;
-    pickup_duration: number;
-    external_store_id?: string;
-}
+
+const _quoteResponseSchema = z.object({
+    created: z.string(),
+    currency_type: z.string(),
+    dropoff_deadline: z.string(),
+    dropoff_eta: z.string(),
+    duration: z.number(),
+    expires: z.string(),
+    fee: z.number(),
+    id: z.string(),
+    kind: z.string(),
+    pickup_duration: z.number(),
+    external_store_id: z.string().optional()
+})
+
+export type QuoteResponse = z.infer<typeof _quoteResponseSchema>
 
 export type DeliveryStatus =
     | 'pending'

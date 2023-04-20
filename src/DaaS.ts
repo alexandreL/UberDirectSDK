@@ -1,15 +1,9 @@
-import { UberDeliveryAuth } from './UberDeliveryAuth'
-import {
-    DeliveryListResponse,
-    DeliveryData,
-    DeliveryResponse, PODRequest,
-    PODResponse,
-    QuoteRequest,
-    QuoteResponse
-} from './DaasTypes'
+import { UberDirectAuth } from './UberDirectAuth'
+import { DeliveryListResponse, DeliveryData, DeliveryResponse, PODRequest, PODResponse, QuoteRequest, QuoteResponse } from './DaasTypes'
 
-class DaaS {
-    constructor(private readonly auth: UberDeliveryAuth) {
+export class DaaS extends UberDirectTypeProtectErrorHandling {
+    constructor(private readonly auth: UberDirectAuth) {
+        super()
     }
 
     async quote(requestBody: QuoteRequest): Promise<QuoteResponse> {
@@ -55,9 +49,9 @@ class DaaS {
     }
 
     async getPOD(customerId: string, deliveryId: string, requestBody: PODRequest): Promise<PODResponse> {
-        const url = `customers/${customerId}/deliveries/${deliveryId}/proof-of-delivery`;
+        const url = `customers/${ customerId }/deliveries/${ deliveryId }/proof-of-delivery`
 
-        const response = await this.auth.makeApiRequest<PODResponse>('post', url, requestBody);
-        return response;
+        const response = await this.auth.makeApiRequest<PODResponse>('post', url, requestBody)
+        return response
     }
 }

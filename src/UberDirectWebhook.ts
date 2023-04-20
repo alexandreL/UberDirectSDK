@@ -2,7 +2,7 @@ import JsSHA from 'jssha'
 import { DeliveryResponse } from './DaasTypes'
 import { CourierUpdate, RefundRequestEvent, WebhookEventKind } from './WebhookTypes'
 
-class UberDeliveryWebhook {
+class UberDirectWebhook {
     private readonly secret: string
 
     constructor(secret: string) {
