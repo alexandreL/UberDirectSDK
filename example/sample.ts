@@ -12,6 +12,7 @@ async function run() {
 
     const daaS = new DaaS(auth)
     daaS.setCallback((error) => {
+        // send to broker of monitoring system or message queue
         console.error(`error in type protection: ${ error.message }`)
         console.error(error)
     })
