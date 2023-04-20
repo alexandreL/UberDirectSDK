@@ -1,4 +1,4 @@
-import { UberDirectAuth, DaaS } from '../src'
+import { UberDirectAuth, UberDirectDaaS, UberDirectWebhook } from '../src'
 
 async function run() {
     const auth = new UberDirectAuth({
@@ -10,13 +10,14 @@ async function run() {
     // directly throw if error occurs in response type
     auth.setEnableThrow(true)
 
-    const daaS = new DaaS(auth)
-    daaS.setCallback((error) => {
+    const daaS = new UberDirectDaaS(auth)
+    daaS.setThrowCallback((error) => {
         // send to broker of monitoring system or message queue
         console.error(`error in type protection: ${ error.message }`)
         console.error(error)
     })
 
+    // quote is executed without error but if tue type is wrong, it will only send a warning to the callback
     const quote = await daaS.quote({
         customer_id: 'CUSTOMER_ID',
         dropoff_address: 'dropoff_address',
@@ -34,7 +35,24 @@ async function run() {
         manifest_total_value: 0,
         external_store_id: 'external_store_id',
     })
-    // quote is executed without error but if tue type is wrong, it will only send a warning to the callback
+
+    const uberDirectWebhook = new UberDirectWebhook('SECRET')
+    uberDirectWebhook.setThrowCallback((error) => {
+        // send to broker of monitoring system or message queue
+        console.error(`error in type protection: ${ error.message }`)
+        console.error(error)
+    })
+
+    const fakeBody = {
+        event: 'fake_event',
+    }
+    const fakeHeaders = {
+        'x-uber-signature': 'fake_signature',
+    }
+
+    // webhook is executed without error but if tue type is wrong, it will only send a warning to the callback
+    const result = uberDirectWebhook.handleWebhook(fakeBody, fakeHeaders)
+
 }
 
 run()

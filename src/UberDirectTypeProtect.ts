@@ -1,10 +1,12 @@
-class UberDirectTypeProtectErrorHandling {
-    callback: ((error: Error) => void) | null = null
+import { ZodError } from 'zod'
+
+export class UberDirectTypeProtectErrorHandling {
+    callback: ((error: ZodError) => void) | null = null
 
     constructor(private enableThrow: boolean = false) {
     }
 
-    setCallback(callback: (error: Error) => void) {
+    setThrowCallback(callback: (error: ZodError) => void) {
         this.callback = callback
     }
 
@@ -12,7 +14,7 @@ class UberDirectTypeProtectErrorHandling {
         this.enableThrow = enableThrow
     }
 
-    protected throw(error: Error) {
+    protected throw(error: ZodError) {
         if (this.callback) {
             this.callback(error)
         }

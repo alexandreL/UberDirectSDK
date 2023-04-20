@@ -1,11 +1,14 @@
 import JsSHA from 'jssha'
-import { DeliveryResponse } from './DaasTypes'
-import { CourierUpdate, RefundRequestEvent, WebhookEventKind } from './WebhookTypes'
+import { DeliveryResponse, deliveryResponseSchema } from './DaasTypes'
+import { CourierUpdate, RefundRequestEvent, WebhookEventKind, refundRequestEventSchema, courierUpdateSchema } from './WebhookTypes'
+import { ZodError } from 'zod'
+import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
 
-class UberDirectWebhook {
+export class UberDirectWebhook extends UberDirectTypeProtectErrorHandling {
     private readonly secret: string
 
     constructor(secret: string) {
+        super()
         this.secret = secret
     }
 
@@ -21,17 +24,6 @@ class UberDirectWebhook {
         }
         if (!payload.kind) throw new Error('Invalid payload')
         return payload.kind as WebhookEventKind
-    }
-
-    private calculateSignature(payload: string | Record<string, unknown>): string {
-        const shaObj = new JsSHA('SHA-256', 'TEXT')
-        shaObj.setHMACKey(this.secret, 'TEXT')
-        if (typeof payload === 'string') {
-            shaObj.update(payload)
-        } else {
-            shaObj.update(JSON.stringify(payload))
-        }
-        return shaObj.getHMAC('HEX')
     }
 
     public handleWebhook(payload: string | Record<string, unknown>, headers: Record<string, unknown>): DeliveryResponse | CourierUpdate | RefundRequestEvent {
@@ -51,14 +43,40 @@ class UberDirectWebhook {
 
         const eventKind = this.getRequestEventKind(payload)
         switch (eventKind) {
-            case WebhookEventKind.DeliveryStatus:
-                return payload as DeliveryResponse
-            case WebhookEventKind.CourierUpdate:
-                return payload as CourierUpdate
-            case WebhookEventKind.RefundRequest:
-                return payload as RefundRequestEvent
+        case WebhookEventKind.DeliveryStatus:
+            try {
+                deliveryResponseSchema.parse(payload)
+            } catch (e) {
+                this.throw(e as ZodError)
+            }
+            return payload as DeliveryResponse
+        case WebhookEventKind.CourierUpdate:
+            try {
+                courierUpdateSchema.parse(payload)
+            } catch (e) {
+                this.throw(e as ZodError)
+            }
+            return payload as CourierUpdate
+        case WebhookEventKind.RefundRequest:
+            try {
+                refundRequestEventSchema.parse(payload)
+            } catch (e) {
+                this.throw(e as ZodError)
+            }
+            return payload as RefundRequestEvent
         }
 
         throw new Error('Unknown webhook event')
+    }
+
+    private calculateSignature(payload: string | Record<string, unknown>): string {
+        const shaObj = new JsSHA('SHA-256', 'TEXT')
+        shaObj.setHMACKey(this.secret, 'TEXT')
+        if (typeof payload === 'string') {
+            shaObj.update(payload)
+        } else {
+            shaObj.update(JSON.stringify(payload))
+        }
+        return shaObj.getHMAC('HEX')
     }
 }

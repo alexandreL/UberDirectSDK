@@ -9,8 +9,9 @@ import {
     QuoteResponse, QuoteResponseSchema, pODResponseSchema, deliveryListResponseSchema, deliveryResponseSchema,
 } from './DaasTypes'
 import { ZodError } from 'zod'
+import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
 
-export class DaaS extends UberDirectTypeProtectErrorHandling {
+export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
     constructor(private readonly auth: UberDirectAuth) {
         super()
     }

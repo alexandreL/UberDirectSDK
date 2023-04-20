@@ -1,5 +1,5 @@
 export * from './AuthTypes'
-export * from './DaaS'
+export * from './UberDirectDaaS'
 export * from './DaasTypes'
 export * from './UberDirectAuth'
 export * from './UberDirectWebhook'

@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosInstance } from 'axios'
 import { AuthCredentials, Method } from './AuthTypes'
+import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
 
 export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
     private _clientId: string
