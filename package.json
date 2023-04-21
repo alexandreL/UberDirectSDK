@@ -1,13 +1,13 @@
 {
   "name": "uber-direct-sdk",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "SDK for the Uber’s delivery APIs enable merchants to integrate their own apps & services with Uber Direct order delivery",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "prepare": "npm run build",
     "build": "tsc",
-    "new-version": "changeset",
+    "new-version": "changeset && npx changeset version",
     "tsup": "tsup --dts --format cjs,esm --external axios,jssha,zod",
     "publish": "npm run lint && npm run tsup && changeset publish",
     "lint": "eslint --fix --ext .ts src"
