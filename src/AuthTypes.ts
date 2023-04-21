@@ -4,6 +4,14 @@ export interface AuthCredentials {
     customerId: string;
 }
 
+export interface AuthInstance {
+    clientId: string;
+    clientSecret: string;
+    customerId: string;
+    accessToken?: string
+    tokenExpirationTime?: number
+}
+
 export type Method =
     | 'get' | 'GET'
     | 'delete' | 'DELETE'

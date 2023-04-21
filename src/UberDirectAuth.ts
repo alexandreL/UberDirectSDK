@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosInstance } from 'axios'
-import { AuthCredentials, Method } from './AuthTypes'
+import { AuthCredentials, AuthInstance, Method } from './AuthTypes'
 import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
 
 /*
@@ -31,6 +31,21 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
                 'Content-Type': 'application/json',
             },
         })
+    }
+
+    /**
+     * reload new instance from saved instance
+     * @param savedInstance
+     */
+    static reloadInstance(savedInstance: AuthInstance): UberDirectAuth {
+        const auth = new UberDirectAuth({
+            clientId: savedInstance.clientId,
+            clientSecret: savedInstance.clientSecret,
+            customerId: savedInstance.customerId,
+        })
+        auth._accessToken = savedInstance.accessToken
+        auth._tokenExpirationTime = savedInstance.tokenExpirationTime
+        return auth
     }
 
     /**
@@ -75,6 +90,19 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
                 return this.makeApiRequest<ResponseType>(method, endpoint, data, retryCount + 1)
             }
             throw error
+        }
+    }
+
+    /**
+     * save current instance
+     */
+    exportInstance(): AuthInstance {
+        return {
+            clientId: this._clientId,
+            clientSecret: this._clientSecret,
+            customerId: this._customerId,
+            accessToken: this._accessToken,
+            tokenExpirationTime: this._tokenExpirationTime,
         }
     }
 
