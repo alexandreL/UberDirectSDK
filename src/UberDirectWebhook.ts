@@ -26,6 +26,12 @@ export class UberDirectWebhook extends UberDirectTypeProtectErrorHandling {
         return payload.kind as WebhookEventKind
     }
 
+    /**
+     * Webhooks allow you to receive real-time updates to your ongoing deliveries. By configuring a URL we can POST updates to,
+     * you’ll get the most up-to-date information to show to your customers.
+     * @param payload
+     * @param headers
+     */
     public handleWebhook(payload: string | Record<string, unknown>, headers: Record<string, unknown>): DeliveryResponse | CourierUpdate | RefundRequestEvent {
         let signature = headers['x-postmates-signature']
         if (!signature)

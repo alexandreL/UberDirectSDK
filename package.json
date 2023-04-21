@@ -7,14 +7,21 @@
   "scripts": {
     "prepare": "npm run build",
     "build": "tsc",
+    "new-version": "changeset",
     "tsup": "tsup --dts --format cjs,esm --external axios,jssha,zod",
-    "publish": "npm run tsup && changeset publish"
+    "publish": "npm run lint && npm run tsup && changeset publish",
+    "lint": "eslint --fix --ext .ts src"
   },
   "keywords": [
     "SDK",
     "uber",
     "delivery"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexandreL/UberDirectSDK.git"
+  },
+  "website": "https://github.com/alexandreL/UberDirectSDK",
   "author": "Alexandre Loubeyres",
   "license": "ISC",
   "devDependencies": {

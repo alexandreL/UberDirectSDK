@@ -2,13 +2,22 @@ import axios, { AxiosError, AxiosInstance } from 'axios'
 import { AuthCredentials, Method } from './AuthTypes'
 import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
 
+/*
+ * UberDirectAuth
+ * @class
+ * @classdesc UberDirectAuth is a class to handle authentication with Uber Direct API and used by all Services of the uber-direct-sdk
+ * @param {AuthCredentials} credentials
+ * @param {string} credentials.clientId
+ * @param {string} credentials.clientSecret
+ * @param {string} credentials.customerId
+ */
 export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
+    httpClient: AxiosInstance
     private _clientId: string
     private _clientSecret: string
     private _customerId: string
     private _accessToken?: string
     private _tokenExpirationTime?: number
-    httpClient: AxiosInstance
 
     constructor(credentials: AuthCredentials) {
         super()
@@ -18,13 +27,62 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
         this.httpClient = axios.create({
             baseURL: 'https://api.uber.com/v1/',
             headers: {
-                Authorization: `Bearer ${ this._accessToken }`,
+                Authorization: `Bearer ${this._accessToken}`,
                 'Content-Type': 'application/json',
             },
         })
     }
 
-    async getAccessToken(): Promise<string> {
+    /**
+     * get customer id
+     */
+    getCustomerId(): string {
+        return this._customerId
+    }
+
+    /**
+     * make api request
+     * @param method
+     * @param endpoint
+     * @param data
+     * @param retryCount
+     */
+    async makeApiRequest<ResponseType>(
+        method: Method,
+        endpoint: string,
+        data?: Record<string, unknown>,
+        retryCount = 0
+    ): Promise<ResponseType> {
+        const accessToken = await this.getAccessToken()
+
+        try {
+            const response = await this.httpClient.request({
+                method,
+                url: endpoint,
+                data,
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+            })
+            return response.data
+        } catch (e) {
+            const error = e as AxiosError
+            //  if error is 504 retry request in 5seconds
+            if (error.response?.status === 504) {
+                if (retryCount > 3) throw error
+                await new Promise(resolve => setTimeout(resolve, 5000))
+                return this.makeApiRequest<ResponseType>(method, endpoint, data, retryCount + 1)
+            }
+            throw error
+        }
+    }
+
+    /**
+     * authenticate and get access token
+     * @private
+     */
+    private async getAccessToken(): Promise<string> {
         if (
             !this._accessToken ||
             (this._tokenExpirationTime && Date.now() >= this._tokenExpirationTime)
@@ -47,40 +105,5 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
             throw new Error('Unable to get access token')
 
         return this._accessToken
-    }
-
-    getCustomerId(): string {
-        return this._customerId
-    }
-
-    async makeApiRequest<ResponseType>(
-        method: Method,
-        endpoint: string,
-        data?: Record<string, unknown>,
-        retryCount = 0
-    ): Promise<ResponseType> {
-        const accessToken = await this.getAccessToken()
-
-        try {
-            const response = await this.httpClient.request({
-                method,
-                url: endpoint,
-                data,
-                headers: {
-                    Authorization: `Bearer ${ accessToken }`,
-                    'Content-Type': 'application/json',
-                },
-            })
-            return response.data
-        } catch (e) {
-            const error = e as AxiosError
-            //  if error is 504 retry request in 5seconds
-            if (error.response?.status === 504) {
-                if (retryCount > 3) throw error
-                await new Promise(resolve => setTimeout(resolve, 5000))
-                return this.makeApiRequest<ResponseType>(method, endpoint, data, retryCount + 1)
-            }
-            throw error
-        }
     }
 }

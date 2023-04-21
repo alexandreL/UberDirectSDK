@@ -1,6 +1,7 @@
 # Uber Direct SDK README.md
 
-The Uber Direct SDK allows you to integrate your own apps and services with Uber Direct order delivery. This SDK is built using TypeScript, which provides better type checking and helps you avoid runtime errors.
+The Uber Direct SDK allows you to integrate your own apps and services with Uber Direct order delivery.
+This SDK is built using TypeScript, which provides better type checking and helps you avoid runtime errors.
 
 ## Installation
 
@@ -13,12 +14,12 @@ npm install uber-direct-sdk
 ### Authentication
 
 ```typescript
-import { UberDirectAuth } from 'uber-direct-sdk';
+import {UberDirectAuth} from 'uber-direct-sdk';
 
 const auth = new UberDirectAuth({
-  clientId: 'CLIENT_ID',
-  clientSecret: 'CLIENT_SECRET',
-  customerId: 'CUSTOMER_ID',
+    clientId: 'CLIENT_ID',
+    clientSecret: 'CLIENT_SECRET',
+    customerId: 'CUSTOMER_ID',
 });
 
 const token = await auth.getAccessToken();
@@ -34,21 +35,7 @@ import { UberDirectDaaS } from 'uber-direct-sdk';
 const daaS = new UberDirectDaaS(auth);
 
 const quote = await daaS.quote({
-  customer_id: 'CUSTOMER_ID',
-  dropoff_address: 'dropoff_address',
-  pickup_address: 'pickup_address',
-  dropoff_latitude: 0,
-  dropoff_longitude: 0,
-  dropoff_phone_number: 'dropoff_phone_number',
-  pickup_latitude: 0,
-  pickup_longitude: 0,
-  pickup_phone_number: 'pickup_phone_number',
-  pickup_ready_dt: 'pickup_ready_dt',
-  pickup_deadline_dt: 'pickup_deadline_dt',
-  dropoff_ready_dt: 'dropoff_ready_dt',
-  dropoff_deadline_dt: 'dropoff_deadline_dt',
-  manifest_total_value: 0,
-  external_store_id: 'external_store_id',
+ ...
 });
 
 const delivery = await daaS.createDelivery(quote.quote_id);
@@ -58,7 +45,7 @@ const deliveryList = await daaS.listDeliveries();
 const deliveryInfo = await daaS.getDeliveryInfo(delivery.delivery_id);
 
 await daaS.updateDelivery(delivery.delivery_id, {
-  current_status: 'pickup',
+    current_status: 'pickup',
 });
 
 await daaS.cancelDelivery(delivery.delivery_id);
@@ -73,35 +60,43 @@ import { UberDirectWebhook } from 'uber-direct-sdk';
 
 const uberDirectWebhook = new UberDirectWebhook('SECRET');
 
-const fakeBody = {
-  event: 'fake_event',
-};
-
-const fakeHeaders = {
-  'x-uber-signature': 'fake_signature',
-};
-
-const result = uberDirectWebhook.handleWebhook(fakeBody, fakeHeaders);
+function controler(req, res) {
+    const result = uberDirectWebhook.handleWebhook(req.body, req.headers);
+}
 ```
 
-## Error Handling
+## JSON Request Verification Error Handling
 
-The SDK provides type checking for the request and response objects. If a parameter or property is missing or has the wrong data type, the SDK will throw an error. You can also use the `setThrowCallback` method to handle errors that occur during the type checking.
+The SDK uses [zod](https://github.com/colinhacks/zod) for verifying all JSON requests. This helps ensure that the data being sent to the API conforms to the
+expected schema and reduces the likelihood of errors occurring due to malformed requests.
 
-```typescript
+You can enable error throwing for each class by setting the `setEnableThrow` property to `true`. This will cause the SDK
+to throw an error if it encounters a type error when validating JSON requests.
+For example, to enable error throwing for a `UberDirectAuth` class:
+
+```javascript
+const auth = new UberDirectAuth({
+    clientId: 'CLIENT_ID',
+    clientSecret: 'CLIENT_SECRET',
+    customerId: 'CUSTOMER_ID',
+});
+auth.setEnableThrow(true);
+```
+
+### Setting a Callback for Handling Type Errors
+
+You can set a callback function to handle type errors that occur during JSON request validation. This can be useful for
+logging or custom error handling.
+
+To set a callback function for a class, use the `setThrowCallback` method and pass in the callback function as an
+argument.
+
+For example, to set a callback function for a `UberDirectDaaS` class:
+
+```javascript
+const daaS = new UberDirectDaaS(auth);
 daaS.setThrowCallback((error) => {
-  // Send the error to a monitoring system or message queue
-  console.error(`error in type protection: ${error.message}`);
-  console.error(error);
-});
-
-uberDirectWebhook.setThrowCallback((error) => {
-  // Send the error to a monitoring system or message queue
-  console.error(`error in type protection: ${error.message}`);
-  console.error(error);
+    console.error(`Type error occurred: ${ error.message }`);
+    // Perform additional error handling logic here
 });
 ```
-
-## Rate Limiting
-
-Our API returns a 429 customer_limited error when you have submitted too many requests in too short of a timeframe. If you are getting rate-limited for intentional usage scenarios, please contact your Account Manager.
