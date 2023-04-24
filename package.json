@@ -10,7 +10,7 @@
     "new-version": "changeset && npx changeset version",
     "tsup": "tsup --dts --format cjs,esm --external axios,jssha,zod",
     "publish": "npm run lint && npm run tsup && changeset publish",
-    "lint": "eslint --fix --ext .ts src"
+    "lint": "eslint --fix --ext .ts src example"
   },
   "keywords": [
     "SDK",

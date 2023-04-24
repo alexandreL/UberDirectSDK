@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosInstance } from 'axios'
 import { AuthCredentials, AuthInstance, Method } from './AuthTypes'
 import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
+import AxiosErrorToString from './axiosError'
 
 /*
  * UberDirectAuth
@@ -89,7 +90,7 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
                 await new Promise(resolve => setTimeout(resolve, 5000))
                 return this.makeApiRequest<ResponseType>(method, endpoint, data, retryCount + 1)
             }
-            throw error
+            throw new Error(AxiosErrorToString(error))
         }
     }
 
@@ -115,18 +116,29 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
             !this._accessToken ||
             (this._tokenExpirationTime && Date.now() >= this._tokenExpirationTime)
         ) {
-            const response = await axios.post(
-                'https://login.uber.com/oauth/v2/token',
-                {
-                    grant_type: 'refresh_token',
-                    client_id: this._clientId,
-                    client_secret: this._clientSecret,
-                }
-            )
-
-            this._accessToken = response.data.access_token
-            this._tokenExpirationTime =
-                Date.now() + response.data.expires_in * 1000 - 300000
+            const data = new URLSearchParams()
+            data.append('grant_type', 'client_credentials')
+            data.append('client_id', this._clientId)
+            data.append('client_secret', this._clientSecret)
+            data.append('scope', 'eats.deliveries')
+            try {
+                const response = await axios.post(
+                    'https://login.uber.com/oauth/v2/token', data,
+                    {
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        }
+                    }
+                )
+                if (response.data.token_type !== 'Bearer')
+                    throw new Error('Invalid token type')
+                this._accessToken = response.data.access_token
+                this._tokenExpirationTime =
+                    Date.now() + response.data.expires_in * 1000 - 300000
+            } catch (e) {
+                const error = e as AxiosError
+                throw new Error(AxiosErrorToString(error))
+            }
         }
 
         if (!this._accessToken)

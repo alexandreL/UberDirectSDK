@@ -1,31 +1,40 @@
 import { z } from 'zod'
 
+export const structuredAddressSchema = z.object({
+    street_address: z.array(z.string()).describe('The street address of the address.'),
+    city: z.string().describe('The city of the address.'),
+    state: z.string().describe('The state of the address.'),
+    zip_code: z.string().describe('The zip code of the address.'),
+    country: z.string().optional().describe('The country of the address (optional).'),
+})
+
+export type structuredAddress = z.infer<typeof structuredAddressSchema>
+
 export const quoteRequestSchema = z.object({
-    customer_id: z.string(),
-    dropoff_address: z.string(),
-    pickup_address: z.string(),
+    dropoff_address: z.string().describe('For single string, format is : “Street Address, City, State, Zip”'),
+    pickup_address: z.string().describe('For single string, format is : “Street Address, City, State, Zip”'),
     dropoff_latitude: z.number().optional(),
     dropoff_longitude: z.number().optional(),
     dropoff_phone_number: z.string().optional(),
     pickup_latitude: z.number().optional(),
     pickup_longitude: z.number().optional(),
     pickup_phone_number: z.string().optional(),
-    pickup_ready_dt: z.string().optional(),
-    pickup_deadline_dt: z.string().optional(),
-    dropoff_ready_dt: z.string().optional(),
-    dropoff_deadline_dt: z.string().optional(),
-    manifest_total_value: z.number().optional(),
+    pickup_ready_dt: z.string().datetime().optional(),
+    pickup_deadline_dt: z.string().datetime().optional(),
+    dropoff_ready_dt: z.string().datetime().optional(),
+    dropoff_deadline_dt: z.string().datetime().optional(),
+    manifest_total_value: z.number().optional().describe('Value (in US cents) of the items in the delivery. i.e.: $10.99 => 1099.'),
     external_store_id: z.string().optional()
 })
 export type QuoteRequest = z.infer<typeof quoteRequestSchema>
 
 export const QuoteResponseSchema = z.object({
-    created: z.string().describe('The date and time the quote was created.'),
+    created: z.string().datetime().describe('The date and time the quote was created.'),
     currency_type: z.string(),
-    dropoff_deadline: z.string(),
-    dropoff_eta: z.string(),
-    duration: z.number(),
-    expires: z.string(),
+    dropoff_deadline: z.string().datetime(),
+    dropoff_eta: z.string().datetime(),
+    duration: z.number().describe('Estimated minutes for this delivery to reach dropoff.'),
+    expires: z.string().datetime(),
     fee: z.number(),
     id: z.string(),
     kind: z.string(),
@@ -45,16 +54,6 @@ export const deliveryStatusSchema = z.union([
     z.literal('returned'),
     z.literal('ongoing')
 ])
-
-export const structuredAddressSchema = z.object({
-    street_address: z.array(z.string()).describe('The street address of the address.'),
-    city: z.string().describe('The city of the address.'),
-    state: z.string().describe('The state of the address.'),
-    zip_code: z.string().describe('The zip code of the address.'),
-    country: z.string().optional().describe('The country of the address (optional).'),
-})
-
-export type structuredAddress = z.infer<typeof structuredAddressSchema>
 
 
 export const sizeSchema = z.object({
@@ -196,7 +195,7 @@ export type ManifestItem = z.infer<typeof manifestItemSchema>
 
 export const relatedDeliverySchema = z.object({
     id: z.string().describe('Unique identifier for the delivery'),
-    relationship: z.union([ z.literal('original'), z.literal('returned') ]).describe('Indicating the nature of the delivery identified in related_deliveries'),
+    relationship: z.union([z.literal('original'), z.literal('returned')]).describe('Indicating the nature of the delivery identified in related_deliveries'),
 })
 
 export type RelatedDelivery = z.infer<typeof relatedDeliverySchema>
@@ -207,7 +206,7 @@ const feeCodeSchema = z.union([
     z.literal('PARTNER_TAX'),
 ])
 
-const categorySchema = z.union([ z.literal('DELIVERY'), z.literal('TAX') ])
+const categorySchema = z.union([z.literal('DELIVERY'), z.literal('TAX')])
 
 export const refundItemSchema = z.object({
     name: z.string().describe('The name of the item.'),
