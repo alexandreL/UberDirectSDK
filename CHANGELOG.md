@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.2.0
+
+### Minor Changes
+
+- auth fix and quote change type
+
 ## 1.1.0
 
 ### Minor Changes
