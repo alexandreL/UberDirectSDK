@@ -112,10 +112,10 @@ export const identificationRequirementSchema = z.object({
 })
 export type IdentificationRequirement = z.infer<typeof identificationRequirementSchema>
 
-export const undeliverableActionSchema = z.object({
-    leave_at_door: z.string().describe('Specify the “unhappy path” action for the courier to take on a delivery once a normal delivery attempt is made and a customer is not available. Cannot leave at door when signature or ID verification requirements are applied when creating a delivery. Photo confirmation of delivery will be automatically applied as a requirement to complete drop-off.'),
-    return: z.string().describe('Specify the “unhappy path” action for the courier to take on a delivery once a normal delivery attempt is made and a customer is not available. This action requests the courier to return the delivery to the pickup waypoint.'),
-})
+export const undeliverableActionSchema = z.enum([
+    'leave_at_door', 'return'
+])
+
 export type UndeliverableAction = z.infer<typeof undeliverableActionSchema>
 
 export const latLngSchema = z.object({
@@ -287,6 +287,22 @@ export const deliveryDataSchema = z.object({
     idempotency_key: z.string().optional().describe('A key used to avoid duplicate order creation with identical idempotency keys for the same account.'),
     external_store_id: z.string().optional().describe('Unique identifier used by partners to reference a store or location.'),
     return_verification: verificationRequirementSchema.optional().describe('Verification steps (barcode scanning, picture, or signature) that must be taken before the return can be completed.'),
+    test_specifications: z.object({
+        robo_courier_specification: z.object({
+            mode: z.string().describe('The mode of the robo courier simulation.'),
+            enroute_for_pickup_at: z.string().optional().describe('The time when the robo courier will be enroute for pickup.'),
+            pickup_imminent_at: z.string().optional().describe('The time when the robo courier will be imminent for pickup.'),
+            pickup_at: z.string().optional().describe('The time when the robo courier will be at the pickup location.'),
+            dropoff_imminent_at: z.string().optional().describe('The time when the robo courier will be imminent for dropoff.'),
+            dropoff_at: z.string().optional().describe('The time when the robo courier will be at the dropoff location.'),
+            cancel_reason: z.enum([
+                'cannot_access_customer_location',
+                'cannot_find_customer_address',
+                'customer_rejected_order',
+                'customer_unavailable'
+            ]).optional().describe('The reason the robo courier was cancelled.'),
+        })
+    }).optional().describe('Set this field to simulate a robot courier delivery. This field is only available for development purposes.'),
 })
 
 export type DeliveryData = z.infer<typeof deliveryDataSchema>

@@ -20,7 +20,7 @@ import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
  * Delivery as a Service (DaaS) is a service that allows you to create deliveries between two addresses.
  */
 export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
-    constructor(private readonly auth: UberDirectAuth) {
+    constructor(private readonly auth: UberDirectAuth, private readonly testMode = false) {
         super()
     }
 
@@ -46,6 +46,13 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
      */
     async createDelivery(requestBody: DeliveryData): Promise<DeliveryResponse> {
         const url = `customers/${this.auth.getCustomerId()}/deliveries`
+        if (this.testMode) {
+            requestBody.test_specifications = {
+                robo_courier_specification: {
+                    mode: 'auto',
+                }
+            }
+        }
 
         const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url, requestBody)
         try {
@@ -80,6 +87,13 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
      */
     async updateDelivery(deliveryId: string, requestBody: DeliveryData): Promise<DeliveryResponse> {
         const url = `customers/${this.auth.getCustomerId()}/deliveries/${deliveryId}`
+        if (this.testMode) {
+            requestBody.test_specifications = {
+                robo_courier_specification: {
+                    mode: 'auto',
+                }
+            }
+        }
 
         const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url, requestBody)
         try {
