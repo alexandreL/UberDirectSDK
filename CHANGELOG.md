@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.2.2
+
+### Patch Changes
+
+- implement testMode for delivery
+
 ## 1.2.1
 
 ### Patch Changes
