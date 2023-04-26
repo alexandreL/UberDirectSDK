@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.2.3
+
+### Patch Changes
+
+- size is a string
+
 ## 1.2.2
 
 ### Patch Changes

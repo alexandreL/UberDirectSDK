@@ -55,14 +55,12 @@ export const deliveryStatusSchema = z.union([
     z.literal('ongoing')
 ])
 
-
-export const sizeSchema = z.object({
-    small: z.string().describe('You can carry it with one hand e.g. bottle of water.'),
-    medium: z.string().describe('You need a tote bag to carry it e.g. retail bag.'),
-    large: z.string().describe('You need two hands to carry it e.g. computer monitor.'),
-    xlarge: z.string().describe('You will need to make multiple trips to/from a vehicle to transport e.g. grocery order. Specifying `xlarge` will cause dispatch to only couriers using a car or larger (no walkers/bikes/scooters/etc…).'),
-    big: z.string().describe('Deprecated - same as large.'),
-})
+export const sizeSchema = z.enum(['small', 'medium', 'large', 'xlarge']).describe(`
+small: You can carry it with one hand e.g. bottle of water.
+medium: You need a tote bag to carry it e.g. retail bag.
+large: You need two hands to carry it e.g. computer monitor.
+xlarge: You will need to make multiple trips to/from a vehicle to transport e.g. grocery order. Specifying \`xlarge\` will cause dispatch to only couriers using a car or larger (no walkers/bikes/scooters/etc…).
+`)
 
 export type Size = z.infer<typeof sizeSchema>
 
@@ -74,10 +72,7 @@ export const dimensionsSchema = z.object({
 
 export type Dimensions = z.infer<typeof dimensionsSchema>
 
-export const deliverableActionSchema = z.object({
-    deliverable_action_meet_at_door: z.string().describe('Meet at door delivery. This is the default if DeliverableAction is not set.'),
-    deliverable_action_leave_at_door: z.string().describe('The “happy path” action for the courier to take on a delivery. When used, delivery action can be set to “leave at door” for a contactless delivery. Cannot leave at door when signature or ID verification requirements are applied when creating a delivery. Photo confirmation of delivery will be automatically applied as a requirement to complete drop-off.'),
-})
+export const deliverableActionSchema = z.enum([ 'deliverable_action_meet_at_door', 'deliverable_action_leave_at_door' ]).describe('The action the courier should take on a delivery. If not specified, the default is “meet at door”.')
 
 export type DeliverableAction = z.infer<typeof deliverableActionSchema>
 
@@ -256,7 +251,6 @@ export const deliveryDataSchema = z.object({
     dropoff_address: z.string().describe('The address where the courier will make the dropoff in structured address format.'),
     dropoff_name: z.string().describe('Name of the place where the courier will make the dropoff.'),
     dropoff_phone_number: z.string().describe('The phone number of the dropoff location.'),
-    manifest: z.string().optional().describe('@deprecated Use manifest_items instead. A description of the items being delivered.'),
     manifest_items: z.array(manifestItemSchema).describe('List of items being delivered.'),
     pickup_address: z.string().describe('Pickup address in structured address format.'),
     pickup_name: z.string().describe('Name of the place where the courier will make the pickup.'),
@@ -281,7 +275,6 @@ export const deliveryDataSchema = z.object({
     pickup_deadline_dt: z.string().optional().describe('End of the window when an order may be picked up.'),
     dropoff_ready_dt: z.string().optional().describe('Beginning of the window when an order must be dropped off.'),
     dropoff_deadline_dt: z.string().optional().describe('End of the window when an order must be dropped off.'),
-    requires_dropoff_signature: z.boolean().optional().describe('@deprecated Flag to indicate if the delivery requires signature capture at dropoff.'),
     requires_id: z.boolean().optional().describe('Flag to indicate if the delivery requires ID check (minimum age) at dropoff.'),
     tip: z.number().optional().describe('Upfront tip amount in cents.'),
     idempotency_key: z.string().optional().describe('A key used to avoid duplicate order creation with identical idempotency keys for the same account.'),
