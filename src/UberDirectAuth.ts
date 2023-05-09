@@ -146,4 +146,12 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
 
         return this._accessToken
     }
+
+    get accessToken(): string | undefined {
+        return this._accessToken
+    }
+
+    get tokenExpirationTime(): number | undefined {
+        return this._tokenExpirationTime
+    }
 }

@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.2.4
+
+### Patch Changes
+
+- getter auth and type fix
+
 ## 1.2.3
 
 ### Patch Changes

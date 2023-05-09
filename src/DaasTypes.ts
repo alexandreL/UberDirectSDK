@@ -45,14 +45,13 @@ export const QuoteResponseSchema = z.object({
 export type QuoteResponse = z.infer<typeof QuoteResponseSchema>
 
 export const deliveryStatusSchema = z.union([
-    z.literal('pending'),
-    z.literal('pickup'),
-    z.literal('pickup_complete'),
-    z.literal('dropoff'),
-    z.literal('delivered'),
-    z.literal('canceled'),
-    z.literal('returned'),
-    z.literal('ongoing')
+    z.literal('pending').describe('Delivery has been accepted but does not yet have a courier assigned'),
+    z.literal('pickup').describe('Courier is assigned and is en route to pick up the items'),
+    z.literal('pickup_complete').describe('Courier is moving towards the dropoff'),
+    z.literal('dropoff').describe('Courier is moving towards the dropoff'),
+    z.literal('delivered').describe('Courier has completed the dropoff'),
+    z.literal('canceled').describe('Delivery has been canceled. This could either be due to use of CancelDelivery endpoint or an internal reason'),
+    z.literal('returned').describe('The delivery was canceled and a new delivery created to return items to the sender. (See related_deliveries in delivery object.)'),
 ])
 
 export const sizeSchema = z.enum(['small', 'medium', 'large', 'xlarge']).describe(`
@@ -390,14 +389,14 @@ export type RefundPayload = z.infer<typeof refundPayloadSchema>
 
 export const deliveryResponseSchema = z.object({
     complete: z.boolean().describe('Flag indicating if the delivery is ongoing.'),
-    courier: courierInfoSchema.optional().describe('Information about the courier. Only present when a delivery is in progress.'),
+    courier: courierInfoSchema.optional().nullable().describe('Information about the courier. Only present when a delivery is in progress.'),
     courier_imminent: z.boolean().describe('Flag indicating if the courier is close to the pickup or dropoff location.'),
     created: z.string().describe('Date/Time at which the delivery was created.'),
     currency: z.string().describe('Three-letter ISO currency code, in lowercase.'),
     dropoff: waypointInfoSchema.describe('Dropoff details.'),
     dropoff_deadline: z.string().describe('When a delivery must be dropped off. This is the end of the dropoff window.'),
     dropoff_eta: z.string().describe('Estimated drop-off time.'),
-    dropoff_identifier: z.string().describe('This field identifies who received delivery at the dropoff location.'),
+    dropoff_identifier: z.string().optional().describe('This field identifies who received delivery at the dropoff location.'),
     dropoff_ready: z.string().describe('When a delivery is ready to be dropped off. This is the start of the dropoff window.'),
     external_id: z.string().describe('An ID for an account as stored in an external system.'),
     fee: z.number().describe('Amount in cents that will be charged if this delivery is created.'),
@@ -411,10 +410,10 @@ export const deliveryResponseSchema = z.object({
     pickup_eta: z.string().describe('Estimated time the courier will arrive at the pickup location.'),
     pickup_ready: z.string().describe('When a delivery is ready to be picked up. This is the start of the pickup window.'),
     quote_id: z.string().describe('ID for the Delivery Quote if one was provided when creating this Delivery.'),
-    refund: z.array(refundDataSchema).describe('This is an array of the refund information.'),
-    related_deliveries: z.array(relatedDeliverySchema).describe('A collection describing other jobs that share an association. i.e.: a return delivery.'),
+    refund: z.array(refundDataSchema).optional().describe('This is an array of the refund information.'),
+    related_deliveries: z.array(relatedDeliverySchema).optional().describe('A collection describing other jobs that share an association. i.e.: a return delivery.'),
     status: deliveryStatusSchema.describe('The current status of the delivery. Always pending when the delivery is created.'),
-    tip: z.number().describe('Amount in cents that will be paid to the courier as a tip.'),
+    tip: z.number().optional().describe('Amount in cents that will be paid to the courier as a tip.'),
     tracking_url: z.string().describe('This url can be used to track the courier during the delivery (unauthenticated page).'),
     undeliverable_action: z.string().describe('If a delivery was undeliverable, this field will contain the resulting action taken by the courier.'),
     undeliverable_reason: z.string().describe('If a delivery was undeliverable, this field will contain the reason why it was undeliverable.'),
