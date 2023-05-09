@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.2.5
+
+### Patch Changes
+
+- webhook type
+
 ## 1.2.4
 
 ### Patch Changes

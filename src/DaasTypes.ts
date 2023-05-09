@@ -411,7 +411,7 @@ export const deliveryResponseSchema = z.object({
     pickup_ready: z.string().describe('When a delivery is ready to be picked up. This is the start of the pickup window.'),
     quote_id: z.string().describe('ID for the Delivery Quote if one was provided when creating this Delivery.'),
     refund: z.array(refundDataSchema).optional().describe('This is an array of the refund information.'),
-    related_deliveries: z.array(relatedDeliverySchema).optional().describe('A collection describing other jobs that share an association. i.e.: a return delivery.'),
+    related_deliveries: z.array(relatedDeliverySchema).optional().nullable().describe('A collection describing other jobs that share an association. i.e.: a return delivery.'),
     status: deliveryStatusSchema.describe('The current status of the delivery. Always pending when the delivery is created.'),
     tip: z.number().optional().describe('Amount in cents that will be paid to the courier as a tip.'),
     tracking_url: z.string().describe('This url can be used to track the courier during the delivery (unauthenticated page).'),

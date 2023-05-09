@@ -1,6 +1,13 @@
 import JsSHA from 'jssha'
-import { DeliveryResponse, deliveryResponseSchema } from './DaasTypes'
-import { CourierUpdate, RefundRequestEvent, WebhookEventKind, refundRequestEventSchema, courierUpdateSchema } from './WebhookTypes'
+import {
+    CourierUpdate,
+    RefundRequestEvent,
+    WebhookEventKind,
+    refundRequestEventSchema,
+    courierUpdateSchema,
+    DeliveryStatusWebhookEventSchema,
+    DeliveryStatusWebhookEvent
+} from './WebhookTypes'
 import { ZodError } from 'zod'
 import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
 
@@ -32,7 +39,7 @@ export class UberDirectWebhook extends UberDirectTypeProtectErrorHandling {
      * @param payload
      * @param headers
      */
-    public handleWebhook(payload: string | Record<string, unknown>, headers: Record<string, unknown>): DeliveryResponse | CourierUpdate | RefundRequestEvent {
+    public handleWebhook(payload: string | Record<string, unknown>, headers: Record<string, unknown>): DeliveryStatusWebhookEvent | CourierUpdate | RefundRequestEvent {
         let signature = headers['x-postmates-signature']
         if (!signature)
             throw new Error('No signature provided')
@@ -51,11 +58,11 @@ export class UberDirectWebhook extends UberDirectTypeProtectErrorHandling {
         switch (eventKind) {
         case WebhookEventKind.DeliveryStatus:
             try {
-                deliveryResponseSchema.parse(payload)
+                DeliveryStatusWebhookEventSchema.parse(payload)
             } catch (e) {
                 this.throw(e as ZodError)
             }
-            return payload as DeliveryResponse
+            return payload as DeliveryStatusWebhookEvent
         case WebhookEventKind.CourierUpdate:
             try {
                 courierUpdateSchema.parse(payload)

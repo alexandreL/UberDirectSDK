@@ -1,4 +1,4 @@
-import { latLngSchema, deliveryDataSchema, refundDataSchema } from './DaasTypes'
+import { deliveryDataSchema, latLngSchema, refundDataSchema } from './DaasTypes'
 import { z } from 'zod'
 
 export enum WebhookEventKind {
@@ -33,3 +33,20 @@ export const refundRequestEventSchema = z.object({
 })
 
 export type RefundRequestEvent = z.infer<typeof refundRequestEventSchema>
+
+export const DeliveryStatusWebhookEventSchema = z.object({
+    status: z.string().describe('Status of the delivery the event refers to.'),
+    kind: z.string().describe('The kind of event in more detail (event.delivery_status).'),
+    created: z.string().describe('Timestamp indicating when the event was generated.'),
+    live_mode: z.boolean().describe('A flag indicating if the event applies to a live vs a test delivery.'),
+    delivery_id: z.string().describe('The id of the delivery the event applies to.'),
+    id: z.string().describe('A unique id for this event instance.'),
+    data: deliveryDataSchema.describe('Information about the delivery'),
+    customer_id: z.string().optional().describe('Unique identifier (prefixed cus_) for the customer this delivery belongs to.'),
+    developer_id: z.string().optional().describe('Unique identifier (prefixed dev_) for the developer the above customer_id maps to.'),
+    account_id: z.string().optional().describe('Unique identifier (prefixed acc_) for the account of the above developer that this delivery belongs to.'),
+    batch_id: z.string().optional().describe('When a delivery is batched, this unique identifier (prefixed bat_) indicates the batch that this delivery belongs to. Can be used to identify deliveries batched with the same courier.'),
+    route_id: z.string().optional().describe('Unique identifier (prefixed rte_) of the route a courier is taking.'),
+})
+
+export type DeliveryStatusWebhookEvent = z.infer<typeof DeliveryStatusWebhookEventSchema>
