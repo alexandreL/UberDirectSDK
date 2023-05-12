@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.3.2
+
+### Patch Changes
+
+- enable logging
+
 ## 1.3.1
 
 ### Patch Changes
