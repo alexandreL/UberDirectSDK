@@ -11,16 +11,17 @@ import {
     QuoteRequest,
     QuoteResponse,
     QuoteResponseSchema,
-} from './DaasTypes'
+} from './types/DaasTypes'
 import { ZodError } from 'zod'
 import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
+import { UberDirectLogger } from './UberDirectLogger'
 
 /**
  * UberDirect Direct DaaS API Client
  * Delivery as a Service (DaaS) is a service that allows you to create deliveries between two addresses.
  */
 export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
-    constructor(private readonly auth: UberDirectAuth, private readonly testMode = false) {
+    constructor(private readonly auth: UberDirectAuth, private readonly logger = new UberDirectLogger(), private readonly testMode = false) {
         super()
     }
 
@@ -29,9 +30,9 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
      * @param requestBody
      */
     async quote(requestBody: QuoteRequest): Promise<QuoteResponse> {
-        const url = `customers/${this.auth.getCustomerId()}/delivery_quotes`
+        const url = `customers/${ this.auth.getCustomerId() }/delivery_quotes`
 
-        const response = await this.auth.makeApiRequest<QuoteResponse>('post', url, requestBody)
+        const response = await this.auth.makeApiRequest<QuoteResponse>('post', url, requestBody, this.logger)
         try {
             QuoteResponseSchema.parse(response)
         } catch (e) {
@@ -45,7 +46,7 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
      * @param requestBody
      */
     async createDelivery(requestBody: DeliveryData): Promise<DeliveryResponse> {
-        const url = `customers/${this.auth.getCustomerId()}/deliveries`
+        const url = `customers/${ this.auth.getCustomerId() }/deliveries`
         if (this.testMode) {
             requestBody.test_specifications = {
                 robo_courier_specification: {
@@ -54,7 +55,7 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
             }
         }
 
-        const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url, requestBody)
+        const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url, requestBody, this.logger)
         try {
             deliveryResponseSchema.parse(response)
         } catch (e) {
@@ -69,9 +70,9 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
      * @param deliveryId
      */
     async getDelivery(deliveryId: string): Promise<DeliveryResponse> {
-        const url = `customers/${this.auth.getCustomerId()}/deliveries/${deliveryId}`
+        const url = `customers/${ this.auth.getCustomerId() }/deliveries/${ deliveryId }`
 
-        const response = await this.auth.makeApiRequest<DeliveryResponse>('get', url)
+        const response = await this.auth.makeApiRequest<DeliveryResponse>('get', url, undefined, this.logger)
         try {
             deliveryResponseSchema.parse(response)
         } catch (e) {
@@ -86,7 +87,7 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
      * @param requestBody
      */
     async updateDelivery(deliveryId: string, requestBody: DeliveryData): Promise<DeliveryResponse> {
-        const url = `customers/${this.auth.getCustomerId()}/deliveries/${deliveryId}`
+        const url = `customers/${ this.auth.getCustomerId() }/deliveries/${ deliveryId }`
         if (this.testMode) {
             requestBody.test_specifications = {
                 robo_courier_specification: {
@@ -95,7 +96,7 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
             }
         }
 
-        const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url, requestBody)
+        const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url, requestBody, this.logger)
         try {
             deliveryResponseSchema.parse(response)
         } catch (e) {
@@ -109,9 +110,9 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
      * @param deliveryId
      */
     async cancelDelivery(deliveryId: string): Promise<boolean> {
-        const url = `customers/${this.auth.getCustomerId()}/deliveries/${deliveryId}/cancel`
+        const url = `customers/${ this.auth.getCustomerId() }/deliveries/${ deliveryId }/cancel`
 
-        const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url)
+        const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url, undefined, this.logger)
         try {
             deliveryResponseSchema.parse(response)
         } catch (e) {
@@ -124,9 +125,9 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
      * List deliveries for a customer.
      */
     async listDeliveries(): Promise<DeliveryListResponse> {
-        const url = `customers/${this.auth.getCustomerId()}/deliveries`
+        const url = `customers/${ this.auth.getCustomerId() }/deliveries`
 
-        const response = await this.auth.makeApiRequest<DeliveryListResponse>('get', url)
+        const response = await this.auth.makeApiRequest<DeliveryListResponse>('get', url, undefined, this.logger)
         try {
             deliveryListResponseSchema.parse(response)
         } catch (e) {
@@ -146,9 +147,9 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
      * @param requestBody
      */
     async getPOD(customerId: string, deliveryId: string, requestBody: PODRequest): Promise<PODResponse> {
-        const url = `customers/${customerId}/deliveries/${deliveryId}/proof-of-delivery`
+        const url = `customers/${ customerId }/deliveries/${ deliveryId }/proof-of-delivery`
 
-        const response = await this.auth.makeApiRequest<PODResponse>('post', url, requestBody)
+        const response = await this.auth.makeApiRequest<PODResponse>('post', url, requestBody, this.logger)
         try {
             pODResponseSchema.parse(response)
         } catch (e) {

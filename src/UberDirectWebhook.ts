@@ -7,7 +7,7 @@ import {
     courierUpdateSchema,
     DeliveryStatusWebhookEventSchema,
     DeliveryStatusWebhookEvent
-} from './WebhookTypes'
+} from './types/WebhookTypes'
 import { ZodError } from 'zod'
 import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
 

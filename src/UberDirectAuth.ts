@@ -1,7 +1,8 @@
-import axios, { AxiosError, AxiosInstance } from 'axios'
-import { AuthCredentials, AuthInstance, Method } from './AuthTypes'
-import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
+import axios, {AxiosError, AxiosInstance} from 'axios'
+import {AuthCredentials, AuthInstance, Method} from './types/AuthTypes'
+import {UberDirectTypeProtectErrorHandling} from './UberDirectTypeProtect'
 import AxiosErrorToString from './axiosError'
+import {UberDirectLogger} from "./UberDirectLogger";
 
 /*
  * UberDirectAuth
@@ -17,8 +18,6 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
     private _clientId: string
     private _clientSecret: string
     private _customerId: string
-    private _accessToken?: string
-    private _tokenExpirationTime?: number
 
     constructor(credentials: AuthCredentials) {
         super()
@@ -32,6 +31,18 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
                 'Content-Type': 'application/json',
             },
         })
+    }
+
+    private _accessToken?: string
+
+    get accessToken(): string | undefined {
+        return this._accessToken
+    }
+
+    private _tokenExpirationTime?: number
+
+    get tokenExpirationTime(): number | undefined {
+        return this._tokenExpirationTime
     }
 
     /**
@@ -61,12 +72,14 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
      * @param method
      * @param endpoint
      * @param data
+     * @param logger
      * @param retryCount
      */
     async makeApiRequest<ResponseType>(
         method: Method,
         endpoint: string,
         data?: Record<string, unknown>,
+        logger?: UberDirectLogger,
         retryCount = 0
     ): Promise<ResponseType> {
         const accessToken = await this.getAccessToken()
@@ -83,12 +96,16 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
             })
             return response.data
         } catch (e) {
+            if ((e as AxiosError).isAxiosError)
+                logger?.error(AxiosErrorToString(e as AxiosError))
+            else
+                logger?.error('Error while making api request', e)
             const error = e as AxiosError
             //  if error is 504 retry request in 5seconds
             if (error.response?.status === 504) {
                 if (retryCount > 3) throw error
                 await new Promise(resolve => setTimeout(resolve, 5000))
-                return this.makeApiRequest<ResponseType>(method, endpoint, data, retryCount + 1)
+                return this.makeApiRequest<ResponseType>(method, endpoint, data, logger, retryCount + 1)
             }
             throw new Error(AxiosErrorToString(error))
         }
@@ -145,13 +162,5 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
             throw new Error('Unable to get access token')
 
         return this._accessToken
-    }
-
-    get accessToken(): string | undefined {
-        return this._accessToken
-    }
-
-    get tokenExpirationTime(): number | undefined {
-        return this._tokenExpirationTime
     }
 }
