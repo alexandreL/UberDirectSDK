@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.3.3
+
+### Patch Changes
+
+- tsup config new folder
+
 ## 1.3.2
 
 ### Patch Changes
