@@ -1,8 +1,8 @@
-import axios, {AxiosError, AxiosInstance} from 'axios'
-import {AuthCredentials, AuthInstance, Method} from './types/AuthTypes'
-import {UberDirectTypeProtectErrorHandling} from './UberDirectTypeProtect'
+import axios, { AxiosError, AxiosInstance } from 'axios'
+import { AuthCredentials, AuthInstance, Method } from './types/AuthTypes'
+import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
 import AxiosErrorToString from './axiosError'
-import {UberDirectLogger} from "./UberDirectLogger";
+import { UberDirectLogger } from './UberDirectLogger'
 
 /*
  * UberDirectAuth

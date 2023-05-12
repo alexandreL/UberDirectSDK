@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.3.1
+
+### Patch Changes
+
+- missing import
+
 ## 1.3.0
 
 ### Minor Changes
