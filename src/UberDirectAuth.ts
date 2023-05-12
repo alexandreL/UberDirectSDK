@@ -27,7 +27,7 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
         this.httpClient = axios.create({
             baseURL: 'https://api.uber.com/v1/',
             headers: {
-                Authorization: `Bearer ${this._accessToken}`,
+                Authorization: `Bearer ${ this._accessToken }`,
                 'Content-Type': 'application/json',
             },
         })
@@ -85,15 +85,26 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
         const accessToken = await this.getAccessToken()
 
         try {
+            if (logger)
+                logger.debug(`Making ${ method } request to ${ endpoint }`, {
+                    method,
+                    url: endpoint,
+                    data,
+                })
             const response = await this.httpClient.request({
                 method,
                 url: endpoint,
                 data,
                 headers: {
-                    Authorization: `Bearer ${accessToken}`,
+                    Authorization: `Bearer ${ accessToken }`,
                     'Content-Type': 'application/json',
                 },
             })
+            if (logger)
+                logger.debug(`Response from ${ method } ${ endpoint }`, {
+                    status: response.status,
+                    data: response.data,
+                })
             return response.data
         } catch (e) {
             if ((e as AxiosError).isAxiosError)

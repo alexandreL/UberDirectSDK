@@ -16,7 +16,7 @@ export class UberDirectLogger {
         this.logger = logger
     }
 
-    info(message: string, ...args: any[]) {
+    debug(message: string, ...args: any[]) {
         if (!this._enable) return
         this._logger.info(message, ...args)
     }
