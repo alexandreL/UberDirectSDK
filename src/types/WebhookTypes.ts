@@ -1,4 +1,4 @@
-import { deliveryDataSchema, latLngSchema, refundDataSchema } from './DaasTypes'
+import { deliveryResponseSchema, latLngSchema, refundDataSchema } from './DaasTypes'
 import { z } from 'zod'
 
 export enum WebhookEventKind {
@@ -17,7 +17,7 @@ export const courierUpdateSchema = z.object({
     live_mode: z.boolean().describe('Flag indicating if the event applies to a live vs. a test delivery'),
     delivery_id: z.string().describe('The ID of the delivery the event applies to'),
     job_id: z.string().describe('The ID of the job the event applies to'),
-    data: deliveryDataSchema,
+    data: deliveryResponseSchema,
 })
 
 export type CourierUpdate = z.infer<typeof courierUpdateSchema>
@@ -41,7 +41,7 @@ export const DeliveryStatusWebhookEventSchema = z.object({
     live_mode: z.boolean().describe('A flag indicating if the event applies to a live vs a test delivery.'),
     delivery_id: z.string().describe('The id of the delivery the event applies to.'),
     id: z.string().describe('A unique id for this event instance.'),
-    data: deliveryDataSchema.describe('Information about the delivery'),
+    data: deliveryResponseSchema.describe('Information about the delivery'),
     customer_id: z.string().optional().describe('Unique identifier (prefixed cus_) for the customer this delivery belongs to.'),
     developer_id: z.string().optional().describe('Unique identifier (prefixed dev_) for the developer the above customer_id maps to.'),
     account_id: z.string().optional().describe('Unique identifier (prefixed acc_) for the account of the above developer that this delivery belongs to.'),
