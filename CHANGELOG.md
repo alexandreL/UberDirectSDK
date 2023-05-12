@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.3.0
+
+### Minor Changes
+
+- logging implementation
+
 ## 1.2.5
 
 ### Patch Changes
