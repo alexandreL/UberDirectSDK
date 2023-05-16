@@ -148,8 +148,7 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
             data.append('grant_type', 'client_credentials')
             data.append('client_id', this._clientId)
             data.append('client_secret', this._clientSecret)
-            data.append('scope', 'eats.deliveries')
-            data.append('scope', 'direct.organizations')
+            data.append('scope', 'eats.deliveries,direct.organizations')
             try {
                 const response = await axios.post(
                     'https://login.uber.com/oauth/v2/token', data,

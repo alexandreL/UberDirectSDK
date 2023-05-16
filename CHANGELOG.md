@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.4.4
+
+### Patch Changes
+
+- scop
+
 ## 1.4.3
 
 ### Patch Changes
