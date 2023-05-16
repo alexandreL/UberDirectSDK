@@ -12,25 +12,39 @@ const merchantTypeSchema = z.union([
     z.literal('MERCHANT_TYPE_PET_SUPPLY')
 ])
 
+export type MerchantType = z.infer<typeof merchantTypeSchema>
+
 const billingTypeSchema = z.union([
     z.literal('BILLING_TYPE_CENTRALIZED'),
     z.literal('BILLING_TYPE_DECENTRALIZED')
 ])
 
+const addressSchema = z.object({
+    street1: z.string().optional(),
+    street2: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    zipcode: z.string().optional(),
+    country_iso2: z.string().optional()
+})
+
+const phoneDetailsSchema = z.object({
+    phone_number: z.string(),
+    country_code: z.string(),
+    subscriber_number: z.string()
+})
+
 const pointOfContactSchema = z.object({
     email: z.string(),
-    phone_details: z.object({
-        phone_number: z.string(),
-        country_code: z.string(),
-        subscriber_number: z.string()
-    })
+    phone_details: phoneDetailsSchema.optional()
 })
 
 const organizationInfoSchema = z.object({
     name: z.string(),
     merchant_type: merchantTypeSchema,
     point_of_contact: pointOfContactSchema,
-    billing_type: billingTypeSchema
+    billing_type: billingTypeSchema,
+    address: addressSchema,
 })
 
 const hierarchyInfoSchema = z.object({
@@ -45,22 +59,6 @@ export const directOrganizationDetailsResponseSchema = z.object({
 
 export type DirectOrganizationDetailsResponse = z.infer<typeof directOrganizationDetailsResponseSchema>
 
-
-const phoneDetailsSchema = z.object({
-    phone_number: z.string(),
-    country_code: z.string(),
-    subscriber_number: z.string()
-})
-
-const addressSchema = z.object({
-    street1: z.string().optional(),
-    street2: z.string().optional(),
-    city: z.string().optional(),
-    state: z.string().optional(),
-    zipcode: z.string().optional(),
-    country_iso2: z.string().optional()
-})
-
 export const createDirectOrgRequestSchema = z.object({
     info: organizationInfoSchema,
     hierarchy_info: hierarchyInfoSchema
@@ -68,7 +66,7 @@ export const createDirectOrgRequestSchema = z.object({
 
 export type CreateDirectOrgRequest = z.infer<typeof createDirectOrgRequestSchema>
 
-const createDirectOrgResponseSchema = z.object({
+export const createDirectOrgResponseSchema = z.object({
     organization_id: z.string(),
     info: organizationInfoSchema,
     hierarchy_info: hierarchyInfoSchema

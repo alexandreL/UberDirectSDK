@@ -4,7 +4,7 @@ import { UberDirectLogger } from './UberDirectLogger'
 import {
     CreateDirectOrgRequest,
     createDirectOrgRequestSchema,
-    CreateDirectOrgResponse,
+    CreateDirectOrgResponse, createDirectOrgResponseSchema,
     DirectOrganizationDetailsResponse,
     directOrganizationDetailsResponseSchema,
     InviteNewUserRequestBody,
@@ -33,11 +33,11 @@ export class UberDirectOrganization extends UberDirectTypeProtectErrorHandling {
         return response
     }
 
-    async createOrganization(organization: CreateDirectOrgResponse): Promise<CreateDirectOrgRequest> {
+    async createOrganization(organization: CreateDirectOrgRequest): Promise<CreateDirectOrgResponse> {
         const url = 'direct/organizations'
-        const response = await this.auth.makeApiRequest<CreateDirectOrgRequest>('post', url, organization, this.logger)
+        const response = await this.auth.makeApiRequest<CreateDirectOrgResponse>('post', url, organization, this.logger)
         try {
-            createDirectOrgRequestSchema.parse(response)
+            createDirectOrgResponseSchema.parse(response)
         } catch (e) {
             this.throw(e as ZodError)
         }
