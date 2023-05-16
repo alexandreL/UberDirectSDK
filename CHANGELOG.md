@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.4.5
+
+### Patch Changes
+
+- auth logger
+
 ## 1.4.4
 
 ### Patch Changes

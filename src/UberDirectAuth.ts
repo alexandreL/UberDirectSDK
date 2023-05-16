@@ -82,7 +82,7 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
         logger?: UberDirectLogger,
         retryCount = 0
     ): Promise<ResponseType> {
-        const accessToken = await this.getAccessToken()
+        const accessToken = await this.getAccessToken(logger)
 
         try {
             if (logger)
@@ -139,7 +139,7 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
      * authenticate and get access token
      * @private
      */
-    private async getAccessToken(): Promise<string> {
+    private async getAccessToken(logger: UberDirectLogger | undefined): Promise<string> {
         if (
             !this._accessToken ||
             (this._tokenExpirationTime && Date.now() >= this._tokenExpirationTime)
@@ -150,6 +150,11 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
             data.append('client_secret', this._clientSecret)
             data.append('scope', 'eats.deliveries,direct.organizations')
             try {
+                if (logger)
+                    logger.debug('Getting access token', {
+                        data
+                    })
+
                 const response = await axios.post(
                     'https://login.uber.com/oauth/v2/token', data,
                     {
@@ -158,6 +163,11 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
                         }
                     }
                 )
+                if (logger)
+                    logger.debug('Response from getting access token', {
+                        status: response.status,
+                        data: response.data,
+                    })
                 if (response.data.token_type !== 'Bearer')
                     throw new Error('Invalid token type')
                 this._accessToken = response.data.access_token
