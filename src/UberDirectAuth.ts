@@ -33,6 +33,12 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
         })
     }
 
+    private _logger: UberDirectLogger | undefined
+
+    set logger(logger: UberDirectLogger | undefined) {
+        this.logger = logger
+    }
+
     private _accessToken?: string
 
     get accessToken(): string | undefined {
@@ -82,7 +88,7 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
         logger?: UberDirectLogger,
         retryCount = 0
     ): Promise<ResponseType> {
-        const accessToken = await this.getAccessToken(logger)
+        const accessToken = await this.getAccessToken()
 
         try {
             if (logger)
@@ -139,7 +145,7 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
      * authenticate and get access token
      * @private
      */
-    private async getAccessToken(logger: UberDirectLogger | undefined): Promise<string> {
+    private async getAccessToken(): Promise<string> {
         if (
             !this._accessToken ||
             (this._tokenExpirationTime && Date.now() >= this._tokenExpirationTime)
@@ -150,8 +156,8 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
             data.append('client_secret', this._clientSecret)
             data.append('scope', this.scope)
             try {
-                if (logger)
-                    logger.debug('Getting access token', {
+                if (this._logger)
+                    this._logger.debug('Getting access token', {
                         data
                     })
 
@@ -163,8 +169,8 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
                         }
                     }
                 )
-                if (logger)
-                    logger.debug('Response from getting access token', {
+                if (this._logger)
+                    this._logger.debug('Response from getting access token', {
                         status: response.status,
                         data: response.data,
                     })
