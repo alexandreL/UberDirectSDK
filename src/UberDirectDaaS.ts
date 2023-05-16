@@ -28,9 +28,10 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
     /**
      * Create a quote to check deliverability, validity and cost for delivery between two addresses.
      * @param requestBody
+     * @param customerId
      */
-    async quote(requestBody: QuoteRequest): Promise<QuoteResponse> {
-        const url = `customers/${ this.auth.getCustomerId() }/delivery_quotes`
+    async quote(requestBody: QuoteRequest, customerId: undefined | string = undefined): Promise<QuoteResponse> {
+        const url = `customers/${ customerId || this.auth.getCustomerId() }/delivery_quotes`
 
         const response = await this.auth.makeApiRequest<QuoteResponse>('post', url, requestBody, this.logger)
         try {
@@ -44,9 +45,10 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
     /**
      * Create a delivery between two addresses.
      * @param requestBody
+     * @param customerId
      */
-    async createDelivery(requestBody: DeliveryData): Promise<DeliveryResponse> {
-        const url = `customers/${ this.auth.getCustomerId() }/deliveries`
+    async createDelivery(requestBody: DeliveryData, customerId: undefined | string = undefined): Promise<DeliveryResponse> {
+        const url = `customers/${ customerId || this.auth.getCustomerId() }/deliveries`
         if (this.testMode) {
             requestBody.test_specifications = {
                 robo_courier_specification: {
@@ -68,9 +70,10 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
     /**
      * Retrieve the current status of an existing delivery
      * @param deliveryId
+     * @param customerId
      */
-    async getDelivery(deliveryId: string): Promise<DeliveryResponse> {
-        const url = `customers/${ this.auth.getCustomerId() }/deliveries/${ deliveryId }`
+    async getDelivery(deliveryId: string, customerId: undefined | string = undefined): Promise<DeliveryResponse> {
+        const url = `customers/${ customerId || this.auth.getCustomerId() }/deliveries/${ deliveryId }`
 
         const response = await this.auth.makeApiRequest<DeliveryResponse>('get', url, undefined, this.logger)
         try {
@@ -85,9 +88,10 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
      * Modify an ongoing delivery.
      * @param deliveryId
      * @param requestBody
+     * @param customerId
      */
-    async updateDelivery(deliveryId: string, requestBody: DeliveryData): Promise<DeliveryResponse> {
-        const url = `customers/${ this.auth.getCustomerId() }/deliveries/${ deliveryId }`
+    async updateDelivery(deliveryId: string, requestBody: DeliveryData, customerId: undefined | string = undefined): Promise<DeliveryResponse> {
+        const url = `customers/${ customerId || this.auth.getCustomerId() }/deliveries/${ deliveryId }`
         if (this.testMode) {
             requestBody.test_specifications = {
                 robo_courier_specification: {
@@ -108,9 +112,10 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
     /**
      * Cancel an ongoing or previously scheduled delivery.
      * @param deliveryId
+     * @param customerId
      */
-    async cancelDelivery(deliveryId: string): Promise<boolean> {
-        const url = `customers/${ this.auth.getCustomerId() }/deliveries/${ deliveryId }/cancel`
+    async cancelDelivery(deliveryId: string, customerId: undefined | string = undefined): Promise<boolean> {
+        const url = `customers/${ customerId || this.auth.getCustomerId() }/deliveries/${ deliveryId }/cancel`
 
         const response = await this.auth.makeApiRequest<DeliveryResponse>('post', url, undefined, this.logger)
         try {
@@ -122,10 +127,11 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
     }
 
     /**
-     * List deliveries for a customer.
+     * List all deliveries for a customer.
+     * @param customerId
      */
-    async listDeliveries(): Promise<DeliveryListResponse> {
-        const url = `customers/${ this.auth.getCustomerId() }/deliveries`
+    async listDeliveries(customerId: undefined | string = undefined): Promise<DeliveryListResponse> {
+        const url = `customers/${ customerId || this.auth.getCustomerId() }/deliveries`
 
         const response = await this.auth.makeApiRequest<DeliveryListResponse>('get', url, undefined, this.logger)
         try {
@@ -142,12 +148,12 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
      * and the type of proof collected (signature, picture, or pincode).
      * If signer name or relationship is enabled, it will also be included in the file.
      * You can use the delivery token, delivery uuid, or UUID from the CreateDelivery response to identify the order when making the API call.
-     * @param customerId
      * @param deliveryId
      * @param requestBody
+     * @param customerId
      */
-    async getPOD(customerId: string, deliveryId: string, requestBody: PODRequest): Promise<PODResponse> {
-        const url = `customers/${ customerId }/deliveries/${ deliveryId }/proof-of-delivery`
+    async getPOD(deliveryId: string, requestBody: PODRequest, customerId: undefined | string = undefined): Promise<PODResponse> {
+        const url = `customers/${ customerId || this.auth.getCustomerId() }/deliveries/${ deliveryId }/proof-of-delivery`
 
         const response = await this.auth.makeApiRequest<PODResponse>('post', url, requestBody, this.logger)
         try {

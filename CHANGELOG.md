@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.4.3
+
+### Patch Changes
+
+- customer_id optional
+
 ## 1.4.2
 
 ### Patch Changes
