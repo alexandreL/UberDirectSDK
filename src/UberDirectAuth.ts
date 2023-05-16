@@ -19,7 +19,7 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
     private _clientSecret: string
     private _customerId: string
 
-    constructor(credentials: AuthCredentials) {
+    constructor(credentials: AuthCredentials, private readonly scope: 'eats.deliveries' | 'direct.organizations' = 'eats.deliveries') {
         super()
         this._clientId = credentials.clientId
         this._clientSecret = credentials.clientSecret
@@ -148,7 +148,7 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
             data.append('grant_type', 'client_credentials')
             data.append('client_id', this._clientId)
             data.append('client_secret', this._clientSecret)
-            data.append('scope', 'eats.deliveries,direct.organizations')
+            data.append('scope', this.scope)
             try {
                 if (logger)
                     logger.debug('Getting access token', {

@@ -24,7 +24,7 @@ export class UberDirectOrganization extends UberDirectTypeProtectErrorHandling {
 
     async getOrganizationDetails(organizationId: string): Promise<DirectOrganizationDetailsResponse> {
         const url = `direct/organizations/${ organizationId }`
-        const response = await this.auth.makeApiRequest<DirectOrganizationDetailsResponse>('get', url, {}, this.logger)
+        const response = await this.auth.makeApiRequest<DirectOrganizationDetailsResponse>('get', url, undefined, this.logger)
         try {
             directOrganizationDetailsResponseSchema.parse(response)
         } catch (e) {

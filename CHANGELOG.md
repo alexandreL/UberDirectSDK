@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.4.6
+
+### Patch Changes
+
+- scope auth
+
 ## 1.4.5
 
 ### Patch Changes
