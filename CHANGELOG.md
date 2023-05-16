@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.4.0
+
+### Minor Changes
+
+- add Organization manager
+
 ## 1.3.5
 
 ### Patch Changes
