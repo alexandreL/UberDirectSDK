@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.4.1
+
+### Patch Changes
+
+- add zod verification
+
 ## 1.4.0
 
 ### Minor Changes

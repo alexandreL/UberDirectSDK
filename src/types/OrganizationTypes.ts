@@ -37,7 +37,7 @@ const hierarchyInfoSchema = z.object({
     parent_organization_id: z.string()
 })
 
-const directOrganizationDetailsResponseSchema = z.object({
+export const directOrganizationDetailsResponseSchema = z.object({
     organization_id: z.string(),
     info: organizationInfoSchema,
     hierarchy_info: hierarchyInfoSchema.optional()
@@ -61,7 +61,7 @@ const addressSchema = z.object({
     country_iso2: z.string().optional()
 })
 
-const createDirectOrgRequestSchema = z.object({
+export const createDirectOrgRequestSchema = z.object({
     info: organizationInfoSchema,
     hierarchy_info: hierarchyInfoSchema
 })
@@ -88,14 +88,14 @@ const userDetailsSchema = z.object({
     phone_details: phoneDetailsSchema.optional()
 })
 
-const inviteNewUserRequestBodySchema = z.object({
+export const inviteNewUserRequestBodySchema = z.object({
     user_details: userDetailsSchema,
     roles: z.array(roleSchema)
 })
 
 export type InviteNewUserRequestBody = z.infer<typeof inviteNewUserRequestBodySchema>
 
-const responseInviteNewUserSchema = z.object({
+export const responseInviteNewUserSchema = z.object({
     membership_id: z.string(),
     organization_id: z.string(),
     user_details: userDetailsSchema,

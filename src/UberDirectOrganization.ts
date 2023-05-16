@@ -2,33 +2,56 @@ import { UberDirectAuth } from './UberDirectAuth'
 import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
 import { UberDirectLogger } from './UberDirectLogger'
 import {
+    CreateDirectOrgRequest,
+    createDirectOrgRequestSchema,
     CreateDirectOrgResponse,
     DirectOrganizationDetailsResponse,
+    directOrganizationDetailsResponseSchema,
     InviteNewUserRequestBody,
-    ResponseInviteNewUser
+    ResponseInviteNewUser,
+    responseInviteNewUserSchema
 } from './types/OrganizationTypes'
+import { ZodError } from 'zod'
 
 /**
  * UberDirect Direct DaaS API Client
  * Delivery as a Service (DaaS) is a service that allows you to create deliveries between two addresses.
  */
 export class UberDirectOrganization extends UberDirectTypeProtectErrorHandling {
-    constructor(private readonly auth: UberDirectAuth, private readonly logger = new UberDirectLogger(), private readonly testMode = false) {
+    constructor(private readonly auth: UberDirectAuth, private readonly logger = new UberDirectLogger()) {
         super()
     }
 
-    getOrganizationDetails(organizationId: string) {
+    async getOrganizationDetails(organizationId: string): Promise<DirectOrganizationDetailsResponse> {
         const url = `direct/organizations/${ organizationId }`
-        return this.auth.makeApiRequest<DirectOrganizationDetailsResponse>('get', url, {}, this.logger)
+        const response = await this.auth.makeApiRequest<DirectOrganizationDetailsResponse>('get', url, {}, this.logger)
+        try {
+            directOrganizationDetailsResponseSchema.parse(response)
+        } catch (e) {
+            this.throw(e as ZodError)
+        }
+        return response
     }
 
-    createOrganization(organization: CreateDirectOrgResponse) {
+    async createOrganization(organization: CreateDirectOrgResponse): Promise<CreateDirectOrgRequest> {
         const url = 'direct/organizations'
-        return this.auth.makeApiRequest<DirectOrganizationDetailsResponse>('post', url, organization, this.logger)
+        const response = await this.auth.makeApiRequest<CreateDirectOrgRequest>('post', url, organization, this.logger)
+        try {
+            createDirectOrgRequestSchema.parse(response)
+        } catch (e) {
+            this.throw(e as ZodError)
+        }
+        return response
     }
 
-    inviteNewUser(newUser: InviteNewUserRequestBody, organizationId: string) {
+    async inviteNewUser(newUser: InviteNewUserRequestBody, organizationId: string): Promise<ResponseInviteNewUser> {
         const url = `direct/organizations/${ organizationId }/memberships/invite`
-        return this.auth.makeApiRequest<ResponseInviteNewUser>('post', url, newUser, this.logger)
+        const response = await this.auth.makeApiRequest<ResponseInviteNewUser>('post', url, newUser, this.logger)
+        try {
+            responseInviteNewUserSchema.parse(response)
+        } catch (e) {
+            this.throw(e as ZodError)
+        }
+        return response
     }
 }
