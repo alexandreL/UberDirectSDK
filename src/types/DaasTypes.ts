@@ -301,7 +301,7 @@ export type DeliveryData = z.infer<typeof deliveryDataSchema>
 
 export const courierInfoSchema = z.object({
     name: z.string().describe('Courier\'s first name and last initial.'),
-    rating: z.number().optional().describe('@deprecated Courier\'s rating on a scale of 1.0 to 5.0.'),
+    rating: z.string().optional().describe('@deprecated Courier\'s rating on a scale of 1.0 to 5.0.'),
     vehicle_type: z.union([
         z.literal('bicycle'),
         z.literal('car'),

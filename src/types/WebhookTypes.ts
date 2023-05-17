@@ -12,11 +12,11 @@ export enum WebhookEventKind {
 export const webhookEventKindSchema = z.nativeEnum(WebhookEventKind)
 
 export const courierUpdateSchema = z.object({
-    location: latLngSchema,
+    location: latLngSchema.optional(),
     kind: webhookEventKindSchema.describe('The kind of the event (always "event.courier_update")'),
     live_mode: z.boolean().describe('Flag indicating if the event applies to a live vs. a test delivery'),
     delivery_id: z.string().describe('The ID of the delivery the event applies to'),
-    job_id: z.string().describe('The ID of the job the event applies to'),
+    job_id: z.string().optional().describe('The ID of the job the event applies to'),
     data: deliveryResponseSchema,
 })
 

@@ -1,5 +1,17 @@
 # uber-direct-sdk
 
+## 1.4.14
+
+### Patch Changes
+
+- message
+
+## 1.4.13
+
+### Patch Changes
+
+- type
+
 ## 1.4.12
 
 ### Patch Changes
