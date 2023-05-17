@@ -1,12 +1,12 @@
 import JsSHA from 'jssha'
 import {
     CourierUpdate,
-    RefundRequestEvent,
-    WebhookEventKind,
-    refundRequestEventSchema,
     courierUpdateSchema,
+    DeliveryStatusWebhookEvent,
     DeliveryStatusWebhookEventSchema,
-    DeliveryStatusWebhookEvent
+    RefundRequestEvent,
+    refundRequestEventSchema,
+    WebhookEventKind
 } from './types/WebhookTypes'
 import { ZodError } from 'zod'
 import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
@@ -19,9 +19,22 @@ export class UberDirectWebhook extends UberDirectTypeProtectErrorHandling {
         this.secret = secret
     }
 
-    public verifySignature(payload: string | Record<string, unknown>, signatureHeader: string): boolean {
+    public verifySignature(payload: string, signatureHeader: string): boolean {
         const signature = this.calculateSignature(payload)
         return signature === signatureHeader
+    }
+
+    public verifySignatureWebhook(payload: string, headers: Record<string, unknown>): boolean {
+        let signature = headers['x-postmates-signature']
+        if (!signature)
+            throw new Error('No signature provided')
+
+        if (Array.isArray(signature) && signature.length > 0)
+            signature = signature[0]
+
+        if (typeof signature !== 'string')
+            throw new Error('Invalid signature type')
+        return this.verifySignature(payload, signature)
     }
 
     public getRequestEventKind(payload: string | Record<string, unknown>): WebhookEventKind {
@@ -40,56 +53,49 @@ export class UberDirectWebhook extends UberDirectTypeProtectErrorHandling {
      * @param headers
      */
     public handleWebhook(payload: string | Record<string, unknown>, headers: Record<string, unknown>): DeliveryStatusWebhookEvent | CourierUpdate | RefundRequestEvent {
-        let signature = headers['x-postmates-signature']
-        if (!signature)
-            throw new Error('No signature provided')
-
-        if (Array.isArray(signature) && signature.length > 0)
-            signature = signature[0]
-
-        if (typeof signature !== 'string')
-            throw new Error('Invalid signature')
-
-        if (!this.verifySignature(payload, signature)) {
+        let stringPayload: string
+        if (typeof payload === 'string') {
+            stringPayload = payload
+        } else {
+            stringPayload = JSON.stringify(payload)
+        }
+        if (!this.verifySignatureWebhook(stringPayload, headers)) {
             throw new Error('Invalid signature')
         }
+        const parsedPayload = typeof payload === 'string' ? JSON.parse(payload) : payload
 
-        const eventKind = this.getRequestEventKind(payload)
+        const eventKind = this.getRequestEventKind(parsedPayload)
         switch (eventKind) {
         case WebhookEventKind.DeliveryStatus:
             try {
-                DeliveryStatusWebhookEventSchema.parse(payload)
+                DeliveryStatusWebhookEventSchema.parse(parsedPayload)
             } catch (e) {
                 this.throw(e as ZodError)
             }
-            return payload as DeliveryStatusWebhookEvent
+            return parsedPayload as DeliveryStatusWebhookEvent
         case WebhookEventKind.CourierUpdate:
             try {
-                courierUpdateSchema.parse(payload)
+                courierUpdateSchema.parse(parsedPayload)
             } catch (e) {
                 this.throw(e as ZodError)
             }
-            return payload as CourierUpdate
+            return parsedPayload as CourierUpdate
         case WebhookEventKind.RefundRequest:
             try {
-                refundRequestEventSchema.parse(payload)
+                refundRequestEventSchema.parse(parsedPayload)
             } catch (e) {
                 this.throw(e as ZodError)
             }
-            return payload as RefundRequestEvent
+            return parsedPayload as RefundRequestEvent
         }
 
         throw new Error('Unknown webhook event')
     }
 
-    private calculateSignature(payload: string | Record<string, unknown>): string {
+    private calculateSignature(payload: string): string {
         const shaObj = new JsSHA('SHA-256', 'TEXT')
         shaObj.setHMACKey(this.secret, 'TEXT')
-        if (typeof payload === 'string') {
-            shaObj.update(payload)
-        } else {
-            shaObj.update(JSON.stringify(payload))
-        }
+        shaObj.update(payload)
         return shaObj.getHMAC('HEX')
     }
 }

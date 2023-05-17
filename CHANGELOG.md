@@ -1,5 +1,17 @@
 # uber-direct-sdk
 
+## 1.4.9
+
+### Patch Changes
+
+- parse
+
+## 1.4.8
+
+### Patch Changes
+
+- log
+
 ## 1.4.7
 
 ### Patch Changes
