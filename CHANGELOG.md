@@ -1,5 +1,23 @@
 # uber-direct-sdk
 
+## 1.4.12
+
+### Patch Changes
+
+- verifyAndHandleWebhook
+
+## 1.4.11
+
+### Patch Changes
+
+- verifyAndHandleWebhook
+
+## 1.4.10
+
+### Patch Changes
+
+- verifySignatureWebhook
+
 ## 1.4.9
 
 ### Patch Changes

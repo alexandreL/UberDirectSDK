@@ -52,7 +52,7 @@ export class UberDirectWebhook extends UberDirectTypeProtectErrorHandling {
      * @param payload
      * @param headers
      */
-    public handleWebhook(payload: string | Record<string, unknown>, headers: Record<string, unknown>): DeliveryStatusWebhookEvent | CourierUpdate | RefundRequestEvent {
+    public verifyAndHandleWebhook(payload: string | Record<string, unknown>, headers: Record<string, unknown>): DeliveryStatusWebhookEvent | CourierUpdate | RefundRequestEvent {
         let stringPayload: string
         if (typeof payload === 'string') {
             stringPayload = payload
@@ -62,6 +62,10 @@ export class UberDirectWebhook extends UberDirectTypeProtectErrorHandling {
         if (!this.verifySignatureWebhook(stringPayload, headers)) {
             throw new Error('Invalid signature')
         }
+        return this.handleWebhook(payload)
+    }
+
+    public handleWebhook(payload: string | Record<string, unknown>): DeliveryStatusWebhookEvent | CourierUpdate | RefundRequestEvent {
         const parsedPayload = typeof payload === 'string' ? JSON.parse(payload) : payload
 
         const eventKind = this.getRequestEventKind(parsedPayload)
