@@ -159,7 +159,7 @@ export type PincodeProof = z.infer<typeof pincodeProofSchema>
 
 export const verificationRequirementSchema = z.object({
     signature_requirement: signatureRequirementSchema.optional().describe('Signature requirement spec to indicate that a signature must be collected at this waypoint.'),
-    barcodes: z.array(barcodeRequirementSchema).optional().describe('Barcode values/types that must be scanned at the waypoint. Number of elements in the array is equal to the number of barcodes that must be scanned.'),
+    barcodes: z.array(barcodeRequirementSchema).nullable().optional().describe('Barcode values/types that must be scanned at the waypoint. Number of elements in the array is equal to the number of barcodes that must be scanned.'),
     pincode: pincodeRequirementSchema.optional().describe('Pincode requirement spec to indicate a delivery requires pincode confirmation upon delivery.'),
     package: packageRequirementSchema.optional().describe('Package verifications required for this waypoint.'),
     identification: identificationRequirementSchema.optional().describe('Identification scanning/verification requirements for this waypoint.'),
