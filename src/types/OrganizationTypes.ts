@@ -29,7 +29,7 @@ const addressSchema = z.object({
 })
 
 const phoneDetailsSchema = z.object({
-    phone_number: z.string(),
+    phone_number: z.string().optional(),
     country_code: z.string(),
     subscriber_number: z.string()
 })
