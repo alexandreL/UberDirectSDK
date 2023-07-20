@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.4.17
+
+### Patch Changes
+
+- vehicle_type
+
 ## 1.4.16
 
 ### Patch Changes
