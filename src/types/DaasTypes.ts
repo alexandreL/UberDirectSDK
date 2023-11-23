@@ -23,7 +23,7 @@ export const quoteRequestSchema = z.object({
     pickup_deadline_dt: z.string().datetime().optional(),
     dropoff_ready_dt: z.string().datetime().optional(),
     dropoff_deadline_dt: z.string().datetime().optional(),
-    manifest_total_value: z.number().optional().describe('Value (in US cents) of the items in the delivery. i.e.: $10.99 => 1099.'),
+    manifest_total_value: z.number().int().optional().describe('Value (in US cents) of the items in the delivery. Must be VAT free. i.e.: $10.99 => 1099.'),
     external_store_id: z.string().optional()
 })
 export type QuoteRequest = z.infer<typeof quoteRequestSchema>
@@ -181,7 +181,7 @@ export const manifestItemSchema = z.object({
     quantity: z.number().describe('Quantity of items'),
     size: sizeSchema.describe('Approximate size of item'),
     dimensions: dimensionsSchema.optional().describe('[optional] Struct that contains dimensions'),
-    price: z.number().optional().describe('[optional] The price of the item'),
+    price: z.number().int().optional().describe('[optional] The price of the item. MUST be VAT free.'),
     weight: z.number().optional().describe('[optional] Weight in grams'),
 })
 
@@ -262,7 +262,7 @@ export const deliveryDataSchema = z.object({
     dropoff_seller_notes: z.string().optional().describe('Additional instructions provided by the merchant for the dropoff.'),
     dropoff_verification: verificationRequirementSchema.optional().describe('Verification steps (i.e. barcode scanning) that must be taken before the dropoff can be completed.'),
     manifest_reference: z.string().optional().describe('A reference that identifies the manifest.'),
-    manifest_total_value: z.number().optional().describe('Value (in US cents) of the items in the delivery.'),
+    manifest_total_value: z.number().int().optional().describe('Value (in US cents) of the items in the delivery. Must be VAT free.'),
     pickup_business_name: z.string().optional().describe('Business name of the pickup location.'),
     pickup_latitude: z.number().optional().describe('Pickup latitude coordinate.'),
     pickup_longitude: z.number().optional().describe('Pickup longitude coordinate.'),

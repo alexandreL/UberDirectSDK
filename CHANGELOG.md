@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.4.18
+
+### Patch Changes
+
+- prince is integer and must be VAT free
+
 ## 1.4.17
 
 ### Patch Changes
