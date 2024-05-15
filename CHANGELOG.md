@@ -1,5 +1,11 @@
 # uber-direct-sdk
 
+## 1.4.19
+
+### Patch Changes
+
+- new relationShip enum
+
 ## 1.4.18
 
 ### Patch Changes

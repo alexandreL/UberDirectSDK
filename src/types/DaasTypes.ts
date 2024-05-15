@@ -189,7 +189,7 @@ export type ManifestItem = z.infer<typeof manifestItemSchema>
 
 export const relatedDeliverySchema = z.object({
     id: z.string().describe('Unique identifier for the delivery'),
-    relationship: z.union([z.literal('original'), z.literal('returned')]).describe('Indicating the nature of the delivery identified in related_deliveries'),
+    relationship: z.union([z.literal('original'), z.literal('returned'), z.literal('multi_order_related')]).describe('Indicating the nature of the delivery identified in related_deliveries'),
 })
 
 export type RelatedDelivery = z.infer<typeof relatedDeliverySchema>
