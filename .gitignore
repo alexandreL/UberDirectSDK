@@ -165,3 +165,6 @@ dist
 .pnp.*
 .npmrc
 .DS_Store
+
+# Bun files
+bun.lockb
