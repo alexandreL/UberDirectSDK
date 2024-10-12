@@ -71,7 +71,7 @@ export const dimensionsSchema = z.object({
 
 export type Dimensions = z.infer<typeof dimensionsSchema>
 
-export const deliverableActionSchema = z.enum([ 'deliverable_action_meet_at_door', 'deliverable_action_leave_at_door' ]).describe('The action the courier should take on a delivery. If not specified, the default is “meet at door”.')
+export const deliverableActionSchema = z.enum(['deliverable_action_meet_at_door', 'deliverable_action_leave_at_door']).describe('The action the courier should take on a delivery. If not specified, the default is “meet at door”.')
 
 export type DeliverableAction = z.infer<typeof deliverableActionSchema>
 
@@ -107,7 +107,7 @@ export const identificationRequirementSchema = z.object({
 export type IdentificationRequirement = z.infer<typeof identificationRequirementSchema>
 
 export const undeliverableActionSchema = z.enum([
-    'leave_at_door', 'return'
+    'leave_at_door', 'return', 'discard'
 ])
 
 export type UndeliverableAction = z.infer<typeof undeliverableActionSchema>
@@ -183,6 +183,7 @@ export const manifestItemSchema = z.object({
     dimensions: dimensionsSchema.optional().describe('[optional] Struct that contains dimensions'),
     price: z.number().int().optional().describe('[optional] The price of the item. MUST be VAT free.'),
     weight: z.number().optional().describe('[optional] Weight in grams'),
+    vat_percentage: z.number().optional().describe('[optional] The percentage of VAT (value add tax) associated to the manifest_items. i.e.: 12.5% => 1250000.')
 })
 
 export type ManifestItem = z.infer<typeof manifestItemSchema>
@@ -422,7 +423,7 @@ export const deliveryResponseSchema = z.object({
     status: deliveryStatusSchema.describe('The current status of the delivery. Always pending when the delivery is created.'),
     tip: z.number().optional().describe('Amount in cents that will be paid to the courier as a tip.'),
     tracking_url: z.string().describe('This url can be used to track the courier during the delivery (unauthenticated page).'),
-    undeliverable_action: z.string().describe('If a delivery was undeliverable, this field will contain the resulting action taken by the courier.'),
+    undeliverable_action: z.enum(['left_at_door', 'returned', '']).describe('If a delivery was undeliverable, this field will contain the resulting action taken by the courier.'),
     undeliverable_reason: z.string().describe('If a delivery was undeliverable, this field will contain the reason why it was undeliverable.'),
     updated: z.string().describe('Date/Time at which the delivery was last updated.'),
     uuid: z.string().describe('Alternative delivery identifier. “Id” field should be used for any identification purposes. “uuid” field is equally unique but loses contextual information (i.e. nothing in this identifier points out that it relates to a delivery). “uuid” is case-sensitive. Value for the “uuid” field is UUID v4 with ‘-’ characters removed.'),
