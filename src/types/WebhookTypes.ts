@@ -42,11 +42,11 @@ export const DeliveryStatusWebhookEventSchema = z.object({
     delivery_id: z.string().describe('The id of the delivery the event applies to.'),
     id: z.string().describe('A unique id for this event instance.'),
     data: deliveryResponseSchema.describe('Information about the delivery'),
-    customer_id: z.string().optional().describe('Unique identifier (prefixed cus_) for the customer this delivery belongs to.'),
-    developer_id: z.string().optional().describe('Unique identifier (prefixed dev_) for the developer the above customer_id maps to.'),
-    account_id: z.string().optional().describe('Unique identifier (prefixed acc_) for the account of the above developer that this delivery belongs to.'),
-    batch_id: z.string().optional().describe('When a delivery is batched, this unique identifier (prefixed bat_) indicates the batch that this delivery belongs to. Can be used to identify deliveries batched with the same courier.'),
-    route_id: z.string().optional().describe('Unique identifier (prefixed rte_) of the route a courier is taking.'),
+    customer_id: z.string().describe('Unique identifier (prefixed cus_) for the customer this delivery belongs to.'),
+    developer_id: z.string().describe('Unique identifier (prefixed dev_) for the developer the above customer_id maps to.'),
+    account_id: z.string().describe('Unique identifier (prefixed acc_) for the account of the above developer that this delivery belongs to.'),
+    batch_id: z.string().describe('When a delivery is batched, this unique identifier (prefixed bat_) indicates the batch that this delivery belongs to. Can be used to identify deliveries batched with the same courier.'),
+    route_id: z.string().describe('Unique identifier (prefixed rte_) of the route a courier is taking.'),
 })
 
 export type DeliveryStatusWebhookEvent = z.infer<typeof DeliveryStatusWebhookEventSchema>
