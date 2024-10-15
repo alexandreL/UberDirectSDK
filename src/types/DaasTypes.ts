@@ -347,7 +347,7 @@ export type RefundFee = z.infer<typeof refundFeeSchema>
 
 export const refundOrderItemSchema = z.object({
     refund_items: z.array(refundItemSchema).describe('See the refund item array object.'),
-    party_at_fault: z.string().describe('“UBER” or “PARTNER”.'),
+    party_at_fault: z.enum(["UBER", "PARTNER"]).describe('“UBER” or “PARTNER”.'),
     partner_refund_amount: z.number().describe('The monetary value of items that the partner is liable towards their customers in cents.'),
     uber_refund_amount: z.number().describe('The monetary value of items that Uber will adjust on the billing details report & invoice in cents.'),
     reason: z.string().describe('A predefined string of refund reason.'),
