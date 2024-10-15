@@ -367,6 +367,8 @@ export const waypointInfoSchema = z.object({
     verification: verificationProofSchema.optional().describe('Details about different verifications that have/will occur at this waypoint and any associated proof.'),
     verification_requirements: verificationRequirementSchema.optional().describe('Details about the verification steps that have/must be taken at this waypoint.'),
     external_store_id: z.string().optional().describe('Unique identifier used by our Partners to reference a Store or Location.'),
+    status: z.enum(["completed", "failed"]).describe("Delivery status in respect to the waypoint location"),
+    status_timestamp: z.string().datetime().describe("Timestamp of when the status was triggered"),
 })
 
 export type WaypointInfo = z.infer<typeof waypointInfoSchema>
