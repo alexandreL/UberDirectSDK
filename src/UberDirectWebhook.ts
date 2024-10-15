@@ -1,10 +1,10 @@
 import JsSHA from 'jssha'
 import {
-    CourierUpdate,
+    CourierUpdateWebookEvent,
     courierUpdateSchema,
     DeliveryStatusWebhookEvent,
     DeliveryStatusWebhookEventSchema,
-    RefundRequestEvent,
+    RefundRequestWebhookEvent,
     refundRequestEventSchema,
     WebhookEventKind
 } from './types/WebhookTypes'
@@ -52,7 +52,7 @@ export class UberDirectWebhook extends UberDirectTypeProtectErrorHandling {
      * @param payload
      * @param headers
      */
-    public verifyAndHandleWebhook(payload: string | Record<string, unknown>, headers: Record<string, unknown>): DeliveryStatusWebhookEvent | CourierUpdate | RefundRequestEvent {
+    public verifyAndHandleWebhook(payload: string | Record<string, unknown>, headers: Record<string, unknown>): DeliveryStatusWebhookEvent | CourierUpdateWebookEvent | RefundRequestWebhookEvent {
         let stringPayload: string
         if (typeof payload === 'string') {
             stringPayload = payload
@@ -65,32 +65,32 @@ export class UberDirectWebhook extends UberDirectTypeProtectErrorHandling {
         return this.handleWebhook(payload)
     }
 
-    public handleWebhook(payload: string | Record<string, unknown>): DeliveryStatusWebhookEvent | CourierUpdate | RefundRequestEvent {
+    public handleWebhook(payload: string | Record<string, unknown>): DeliveryStatusWebhookEvent | CourierUpdateWebookEvent | RefundRequestWebhookEvent {
         const parsedPayload = typeof payload === 'string' ? JSON.parse(payload) : payload
 
         const eventKind = this.getRequestEventKind(parsedPayload)
         switch (eventKind) {
-        case WebhookEventKind.DeliveryStatus:
-            try {
-                DeliveryStatusWebhookEventSchema.parse(parsedPayload)
-            } catch (e: any) {
-                this.throw(e as ZodError)
-            }
-            return parsedPayload as DeliveryStatusWebhookEvent
-        case WebhookEventKind.CourierUpdate:
-            try {
-                courierUpdateSchema.parse(parsedPayload)
-            } catch (e: any) {
-                this.throw(e as ZodError)
-            }
-            return parsedPayload as CourierUpdate
-        case WebhookEventKind.RefundRequest:
-            try {
-                refundRequestEventSchema.parse(parsedPayload)
-            } catch (e: any) {
-                this.throw(e as ZodError)
-            }
-            return parsedPayload as RefundRequestEvent
+            case WebhookEventKind.DeliveryStatus:
+                try {
+                    DeliveryStatusWebhookEventSchema.parse(parsedPayload)
+                } catch (e: any) {
+                    this.throw(e as ZodError)
+                }
+                return parsedPayload as DeliveryStatusWebhookEvent
+            case WebhookEventKind.CourierUpdate:
+                try {
+                    courierUpdateSchema.parse(parsedPayload)
+                } catch (e: any) {
+                    this.throw(e as ZodError)
+                }
+                return parsedPayload as CourierUpdateWebookEvent
+            case WebhookEventKind.RefundRequest:
+                try {
+                    refundRequestEventSchema.parse(parsedPayload)
+                } catch (e: any) {
+                    this.throw(e as ZodError)
+                }
+                return parsedPayload as RefundRequestWebhookEvent
         }
 
         throw new Error('Unknown webhook event')

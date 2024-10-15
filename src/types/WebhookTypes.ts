@@ -20,7 +20,7 @@ export const courierUpdateSchema = z.object({
     data: deliveryResponseSchema,
 })
 
-export type CourierUpdate = z.infer<typeof courierUpdateSchema>
+export type CourierUpdateWebookEvent = z.infer<typeof courierUpdateSchema>
 
 export const refundRequestEventSchema = z.object({
     kind: webhookEventKindSchema.describe('The kind of the event, (always "event.courier_update") '),
@@ -32,7 +32,7 @@ export const refundRequestEventSchema = z.object({
     external_order_id: z.string().optional().describe('An ID for delivery in an external system.'),
 })
 
-export type RefundRequestEvent = z.infer<typeof refundRequestEventSchema>
+export type RefundRequestWebhookEvent = z.infer<typeof refundRequestEventSchema>
 
 export const DeliveryStatusWebhookEventSchema = z.object({
     status: z.string().describe('Status of the delivery the event refers to.'),
