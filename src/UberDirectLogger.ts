@@ -1,6 +1,10 @@
+import * as console from 'console'
+import { Logger } from './types/logger'
+
 export class UberDirectLogger {
-    constructor(logger: any = console, enable = false) {
-        this._logger = logger
+    constructor(logger?: Logger, enable = false) {
+        if (logger)
+            this._logger = logger
         this._enable = enable
     }
 
@@ -10,23 +14,23 @@ export class UberDirectLogger {
         this._enable = enable
     }
 
-    private _logger = console
+    private _logger: Logger = console
 
-    set logger(logger: any) {
-        this.logger = logger
+    set logger(logger: Logger) {
+        this._logger = logger
     }
 
-    debug(message: string, ...args: any[]) {
+    debug(message: string, ...args: unknown[]) {
         if (!this._enable) return
         this._logger.info(message, ...args)
     }
 
-    warn(message: string, ...args: any[]) {
+    warn(message: string, ...args: unknown[]) {
         if (!this._enable) return
         this._logger.warn(message, ...args)
     }
 
-    error(message: string, ...args: any[]) {
+    error(message: string, ...args: unknown[]) {
         if (!this._enable) return
         this._logger.error(message, ...args)
     }

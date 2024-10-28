@@ -22,4 +22,4 @@ export type Method =
     | 'patch' | 'PATCH'
     | 'purge' | 'PURGE'
     | 'link' | 'LINK'
-    | 'unlink' | 'UNLINK';
+    | 'unlink' | 'UNLINK'

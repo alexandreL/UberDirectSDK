@@ -73,22 +73,31 @@ export class UberDirectWebhook extends UberDirectTypeProtectErrorHandling {
             case WebhookEventKind.DeliveryStatus:
                 try {
                     DeliveryStatusWebhookEventSchema.parse(parsedPayload)
-                } catch (e: any) {
-                    this.throw(e as ZodError)
+                } catch (e: unknown) {
+                    if (e instanceof ZodError)
+                        this.throw(e)
+                    else
+                        throw e // should not happen
                 }
                 return parsedPayload as DeliveryStatusWebhookEvent
             case WebhookEventKind.CourierUpdate:
                 try {
                     courierUpdateSchema.parse(parsedPayload)
-                } catch (e: any) {
-                    this.throw(e as ZodError)
+                } catch (e: unknown) {
+                    if (e instanceof ZodError)
+                        this.throw(e)
+                    else
+                        throw e // should not happen
                 }
                 return parsedPayload as CourierUpdateWebookEvent
             case WebhookEventKind.RefundRequest:
                 try {
                     refundRequestEventSchema.parse(parsedPayload)
-                } catch (e: any) {
-                    this.throw(e as ZodError)
+                } catch (e: unknown) {
+                    if (e instanceof ZodError)
+                        this.throw(e)
+                    else
+                        throw e // should not
                 }
                 return parsedPayload as RefundRequestWebhookEvent
         }

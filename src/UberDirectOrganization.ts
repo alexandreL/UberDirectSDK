@@ -3,8 +3,8 @@ import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'
 import { UberDirectLogger } from './UberDirectLogger'
 import {
     CreateDirectOrgRequest,
-    createDirectOrgRequestSchema,
-    CreateDirectOrgResponse, createDirectOrgResponseSchema,
+    CreateDirectOrgResponse,
+    createDirectOrgResponseSchema,
     DirectOrganizationDetailsResponse,
     directOrganizationDetailsResponseSchema,
     InviteNewUserRequestBody,

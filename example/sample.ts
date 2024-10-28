@@ -1,6 +1,13 @@
-import { UberDirectAuth, UberDirectDaaS, UberDirectWebhook } from '../src'
+import {
+    CourierUpdateWebookEvent,
+    DeliveryStatusWebhookEvent,
+    RefundRequestWebhookEvent,
+    UberDirectAuth,
+    UberDirectDaaS,
+    UberDirectWebhook
+} from '../src'
 
-async function run() {
+async function run(): Promise<DeliveryStatusWebhookEvent | CourierUpdateWebookEvent | RefundRequestWebhookEvent> {
     const auth = new UberDirectAuth({
         clientId: 'CLIENT_ID',
         clientSecret: 'CLIENT_SECRET',
@@ -39,9 +46,8 @@ async function run() {
         'x-uber-signature': 'fake_signature',
     }
 
-    // webhook is executed without error but if tue type is wrong, it will only send a warning to the callback
-    const result = uberDirectWebhook.verifyAndHandleWebhook(fakeBody, fakeHeaders)
-
+    // webhook is executed without error but if the type is wrong, it will only send a warning to the callback
+    return uberDirectWebhook.verifyAndHandleWebhook(fakeBody, fakeHeaders)
 }
 
 run()

@@ -3,7 +3,7 @@ import { ZodError } from 'zod'
 export class UberDirectTypeProtectErrorHandling {
     callback: ((error: ZodError) => void) | null = null
 
-    constructor(private enableThrow: boolean = false) {
+    constructor(private enableThrow = false) {
     }
 
     /**

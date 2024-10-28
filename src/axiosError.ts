@@ -8,7 +8,7 @@ function indent(str: string): string {
         .join('\n')
 }
 
-function json(data: JsonValue): string {
+function beautyJson(data: JsonValue): string {
     return JSON.stringify(data, null, 2)
 }
 
@@ -17,27 +17,28 @@ export default function AxiosErrorToString(error: AxiosError): string {
     let requestMessage = ''
 
     if (error.config) {
-        let { data } = error.config
-
-        try {
-            data = JSON.parse(data)
-        } catch (_) {
-            // ignore
-        }
-
         let requestData = ''
 
         if (error.config.data) {
+            let { data } = error.config
+
+            try {
+                data = JSON.parse(data)
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            } catch (_) {
+                // ignore
+            }
+
             requestData = `
 Request Data -
-${indent(json(data))}`
+${indent(beautyJson(data))}`
         }
 
         requestMessage = `
 Request -
   ${error.config.method ? error.config.method.toUpperCase() : ''} ${
-    error.config.url
-}
+        error.config.url
+    }
 ${requestData}`
     }
 
@@ -49,7 +50,7 @@ ${requestData}`
         if (error.response.data) {
             responseData = `
 Response Data -
-${indent(json(error.response.data))}`
+${indent(beautyJson(error.response.data as JsonValue))}`
         }
 
         responseMessage = `
