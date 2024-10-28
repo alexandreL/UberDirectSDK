@@ -53,7 +53,7 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
             requestBody.test_specifications = {
                 robo_courier_specification: {
                     mode: 'auto',
-                }
+                },
             }
         }
 
@@ -96,7 +96,7 @@ export class UberDirectDaaS extends UberDirectTypeProtectErrorHandling {
             requestBody.test_specifications = {
                 robo_courier_specification: {
                     mode: 'auto',
-                }
+                },
             }
         }
 

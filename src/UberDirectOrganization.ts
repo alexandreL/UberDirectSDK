@@ -9,7 +9,7 @@ import {
     directOrganizationDetailsResponseSchema,
     InviteNewUserRequestBody,
     ResponseInviteNewUser,
-    responseInviteNewUserSchema
+    responseInviteNewUserSchema,
 } from './types/OrganizationTypes'
 import { ZodError } from 'zod'
 

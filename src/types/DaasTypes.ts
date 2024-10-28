@@ -24,7 +24,7 @@ export const quoteRequestSchema = z.object({
     dropoff_ready_dt: z.string().datetime().optional(),
     dropoff_deadline_dt: z.string().datetime().optional(),
     manifest_total_value: z.number().int().optional().describe('Value (in US cents) of the items in the delivery. Must be VAT free. i.e.: $10.99 => 1099.'),
-    external_store_id: z.string().optional()
+    external_store_id: z.string().optional(),
 })
 export type QuoteRequest = z.infer<typeof quoteRequestSchema>
 
@@ -39,7 +39,7 @@ export const QuoteResponseSchema = z.object({
     id: z.string(),
     kind: z.string(),
     pickup_duration: z.number(),
-    external_store_id: z.string().optional()
+    external_store_id: z.string().optional(),
 })
 
 export type QuoteResponse = z.infer<typeof QuoteResponseSchema>
@@ -54,7 +54,7 @@ export const deliveryStatusSchema = z.union([
     z.literal('returned').describe('The delivery was canceled and a new delivery created to return items to the sender. (See related_deliveries in delivery object.)'),
 ])
 
-export const sizeSchema = z.enum(['small', 'medium', 'large', 'xlarge']).describe(`
+export const sizeSchema = z.enum([ 'small', 'medium', 'large', 'xlarge' ]).describe(`
 small: You can carry it with one hand e.g. bottle of water.
 medium: You need a tote bag to carry it e.g. retail bag.
 large: You need two hands to carry it e.g. computer monitor.
@@ -71,7 +71,7 @@ export const dimensionsSchema = z.object({
 
 export type Dimensions = z.infer<typeof dimensionsSchema>
 
-export const deliverableActionSchema = z.enum(['deliverable_action_meet_at_door', 'deliverable_action_leave_at_door']).describe('The action the courier should take on a delivery. If not specified, the default is “meet at door”.')
+export const deliverableActionSchema = z.enum([ 'deliverable_action_meet_at_door', 'deliverable_action_leave_at_door' ]).describe('The action the courier should take on a delivery. If not specified, the default is “meet at door”.')
 
 export type DeliverableAction = z.infer<typeof deliverableActionSchema>
 
@@ -107,7 +107,7 @@ export const identificationRequirementSchema = z.object({
 export type IdentificationRequirement = z.infer<typeof identificationRequirementSchema>
 
 export const undeliverableActionSchema = z.enum([
-    'leave_at_door', 'return', 'discard'
+    'leave_at_door', 'return', 'discard',
 ])
 
 export type UndeliverableAction = z.infer<typeof undeliverableActionSchema>
@@ -183,14 +183,14 @@ export const manifestItemSchema = z.object({
     dimensions: dimensionsSchema.optional().describe('[optional] Struct that contains dimensions'),
     price: z.number().int().optional().describe('[optional] The price of the item. MUST be VAT free.'),
     weight: z.number().optional().describe('[optional] Weight in grams'),
-    vat_percentage: z.number().optional().describe('[optional] The percentage of VAT (value add tax) associated to the manifest_items. i.e.: 12.5% => 1250000.')
+    vat_percentage: z.number().optional().describe('[optional] The percentage of VAT (value add tax) associated to the manifest_items. i.e.: 12.5% => 1250000.'),
 })
 
 export type ManifestItem = z.infer<typeof manifestItemSchema>
 
 export const relatedDeliverySchema = z.object({
     id: z.string().describe('Unique identifier for the delivery'),
-    relationship: z.union([z.literal('original'), z.literal('returned'), z.literal('multi_order_related')]).describe('Indicating the nature of the delivery identified in related_deliveries'),
+    relationship: z.union([ z.literal('original'), z.literal('returned'), z.literal('multi_order_related') ]).describe('Indicating the nature of the delivery identified in related_deliveries'),
 })
 
 export type RelatedDelivery = z.infer<typeof relatedDeliverySchema>
@@ -201,7 +201,7 @@ const feeCodeSchema = z.union([
     z.literal('PARTNER_TAX'),
 ])
 
-const categorySchema = z.union([z.literal('DELIVERY'), z.literal('TAX')])
+const categorySchema = z.union([ z.literal('DELIVERY'), z.literal('TAX') ])
 
 export const refundItemSchema = z.object({
     name: z.string().describe('The name of the item.'),
@@ -227,7 +227,7 @@ export const updateDeliveryRequestSchema = z.object({
 export type UpdateDeliveryRequest = z.infer<typeof updateDeliveryRequestSchema>
 
 export const pODResponseSchema = z.object({
-    document: z.string().describe('A long Base64 string representing the image')
+    document: z.string().describe('A long Base64 string representing the image'),
 })
 
 export type PODResponse = z.infer<typeof pODResponseSchema>
@@ -236,13 +236,13 @@ export const pODRequestSchema = z.object({
     waypoint: z.union([
         z.literal('pickup'),
         z.literal('dropoff'),
-        z.literal('return')
+        z.literal('return'),
     ]),
     type: z.union([
         z.literal('picture'),
         z.literal('signature'),
         z.literal('pincode'),
-    ])
+    ]),
 })
 
 export type PODRequest = z.infer<typeof pODRequestSchema>
@@ -292,9 +292,9 @@ export const deliveryDataSchema = z.object({
                 'cannot_access_customer_location',
                 'cannot_find_customer_address',
                 'customer_rejected_order',
-                'customer_unavailable'
+                'customer_unavailable',
             ]).optional().describe('The reason the robo courier was cancelled.'),
-        })
+        }),
     }).optional().describe('Set this field to simulate a robot courier delivery. This field is only available for development purposes.'),
 })
 
@@ -347,7 +347,7 @@ export type RefundFee = z.infer<typeof refundFeeSchema>
 
 export const refundOrderItemSchema = z.object({
     refund_items: z.array(refundItemSchema).describe('See the refund item array object.'),
-    party_at_fault: z.enum(['UBER', 'PARTNER']).describe('“UBER” or “PARTNER”.'),
+    party_at_fault: z.enum([ 'UBER', 'PARTNER' ]).describe('“UBER” or “PARTNER”.'),
     partner_refund_amount: z.number().describe('The monetary value of items that the partner is liable towards their customers in cents.'),
     uber_refund_amount: z.number().describe('The monetary value of items that Uber will adjust on the billing details report & invoice in cents.'),
     reason: z.string().describe('A predefined string of refund reason.'),
@@ -367,7 +367,7 @@ export const waypointInfoSchema = z.object({
     verification: verificationProofSchema.optional().describe('Details about different verifications that have/will occur at this waypoint and any associated proof.'),
     verification_requirements: verificationRequirementSchema.optional().describe('Details about the verification steps that have/must be taken at this waypoint.'),
     external_store_id: z.string().optional().describe('Unique identifier used by our Partners to reference a Store or Location.'),
-    status: z.enum(['completed', 'failed']).describe('Delivery status in respect to the waypoint location'),
+    status: z.enum([ 'completed', 'failed' ]).describe('Delivery status in respect to the waypoint location'),
     status_timestamp: z.string().datetime().describe('Timestamp of when the status was triggered'),
 })
 
@@ -425,7 +425,7 @@ export const deliveryResponseSchema = z.object({
     status: deliveryStatusSchema.describe('The current status of the delivery. Always pending when the delivery is created.'),
     tip: z.number().optional().describe('Amount in cents that will be paid to the courier as a tip.'),
     tracking_url: z.string().describe('This url can be used to track the courier during the delivery (unauthenticated page).'),
-    undeliverable_action: z.enum(['left_at_door', 'returned', '']).describe('If a delivery was undeliverable, this field will contain the resulting action taken by the courier.'),
+    undeliverable_action: z.enum([ 'left_at_door', 'returned', '' ]).describe('If a delivery was undeliverable, this field will contain the resulting action taken by the courier.'),
     undeliverable_reason: z.string().describe('If a delivery was undeliverable, this field will contain the reason why it was undeliverable.'),
     updated: z.string().describe('Date/Time at which the delivery was last updated.'),
     uuid: z.string().describe('Alternative delivery identifier. “Id” field should be used for any identification purposes. “uuid” field is equally unique but loses contextual information (i.e. nothing in this identifier points out that it relates to a delivery). “uuid” is case-sensitive. Value for the “uuid” field is UUID v4 with ‘-’ characters removed.'),

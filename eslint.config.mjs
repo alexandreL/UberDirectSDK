@@ -4,6 +4,7 @@ import tsParser from '@typescript-eslint/parser'
 import eslintJs from '@eslint/js'
 import eslintTs from 'typescript-eslint'
 import stylisticTs from '@stylistic/eslint-plugin-ts'
+import stylistic from '@stylistic/eslint-plugin'
 
 
 const tsFiles = [ '{src,example}/**/*.ts' ]
@@ -21,7 +22,8 @@ const customTypescriptConfig = {
     plugins: {
         import: importPlugin,
         'import/parsers': tsParser,
-        '@stylistic/ts': stylisticTs
+        '@stylistic/ts': stylisticTs,
+        '@stylistic': stylistic,
     },
     languageOptions: {
         ...languageOptions,
@@ -37,15 +39,26 @@ const customTypescriptConfig = {
     },
     rules: {
         ...importPlugin.configs.typescript.rules,
-        '@stylistic/ts/indent': ['error', 4],
-        '@stylistic/ts/semi': ['error', 'never'],
-        '@stylistic/ts/quotes': ['error', 'single'],
-        'object-curly-newline': 'error',
-        'object-curly-spacing': [
+        '@stylistic/ts/indent': [ 'error', 4 ],
+        '@stylistic/ts/semi': [ 'error', 'never' ],
+        '@stylistic/ts/quotes': [ 'error', 'single' ],
+        '@stylistic/ts/object-curly-newline': 'error',
+        '@stylistic/ts/object-curly-spacing': [
             'error',
             'always',
         ],
-        'no-duplicate-imports': 'error',
+        '@stylistic/array-bracket-spacing': [
+            'error',
+            'always',
+        ],
+        '@stylistic/array-element-newline': [
+            'error',
+            'consistent',
+        ],
+        '@stylistic/comma-dangle': [
+            'error',
+            'always-multiline',
+        ],
     },
 }
 

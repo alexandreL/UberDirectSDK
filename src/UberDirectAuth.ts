@@ -86,7 +86,7 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
         endpoint: string,
         data?: Record<string, unknown>,
         logger?: UberDirectLogger,
-        retryCount = 0
+        retryCount = 0,
     ): Promise<ResponseType> {
         const accessToken = await this.getAccessToken()
 
@@ -158,7 +158,7 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
             try {
                 if (this._logger)
                     this._logger.debug('Getting access token', {
-                        data
+                        data,
                     })
 
                 const response = await axios.post(
@@ -166,8 +166,8 @@ export class UberDirectAuth extends UberDirectTypeProtectErrorHandling {
                     {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
-                        }
-                    }
+                        },
+                    },
                 )
                 if (this._logger)
                     this._logger.debug('Response from getting access token', {

@@ -6,7 +6,7 @@ import {
     DeliveryStatusWebhookEventSchema,
     RefundRequestWebhookEvent,
     refundRequestEventSchema,
-    WebhookEventKind
+    WebhookEventKind,
 } from './types/WebhookTypes'
 import { ZodError } from 'zod'
 import { UberDirectTypeProtectErrorHandling } from './UberDirectTypeProtect'

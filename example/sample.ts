@@ -4,7 +4,7 @@ import {
     RefundRequestWebhookEvent,
     UberDirectAuth,
     UberDirectDaaS,
-    UberDirectWebhook
+    UberDirectWebhook,
 } from '../src'
 
 async function run(): Promise<DeliveryStatusWebhookEvent | CourierUpdateWebookEvent | RefundRequestWebhookEvent> {
